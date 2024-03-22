@@ -86,5 +86,10 @@
     "semi": true,
     "singleQuote": false,
     "endOfLine": "lf"
+  },
+  "pnpm": {
+    "overrides": {
+      "rollup": "npm:@rollup/wasm-node"
+    }
   }
 }
