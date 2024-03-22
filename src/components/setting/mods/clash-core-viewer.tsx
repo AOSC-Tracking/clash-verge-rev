@@ -27,7 +27,6 @@ import { showNotice } from "@/services/noticeService";
 
 const VALID_CORE = [
   { name: "Mihomo", core: "verge-mihomo", chip: "Release Version" },
-  { name: "Mihomo Alpha", core: "verge-mihomo-alpha", chip: "Alpha Version" },
 ];
 
 export const ClashCoreViewer = forwardRef<DialogRef>((props, ref) => {
