@@ -29,12 +29,7 @@ const VALID_CORE = [
     core: 'verge-mihomo',
     chipKey: 'settings.modals.clashCore.variants.release',
   },
-  {
-    name: 'Mihomo Alpha',
-    core: 'verge-mihomo-alpha',
-    chipKey: 'settings.modals.clashCore.variants.alpha',
-  },
-]
+];
 
 export function ClashCoreViewer({ ref }: { ref?: Ref<DialogRef> }) {
   const { t } = useTranslation()
