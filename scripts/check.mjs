@@ -407,18 +407,6 @@ const resolveEnableLoopback = () =>
 
 const tasks = [
   // { name: "clash", func: resolveClash, retry: 5 },
-  {
-    name: "clash-meta-alpha",
-    func: () =>
-      getLatestAlphaVersion().then(() => resolveSidecar(clashMetaAlpha())),
-    retry: 5,
-  },
-  {
-    name: "clash-meta",
-    func: () =>
-      getLatestReleaseVersion().then(() => resolveSidecar(clashMeta())),
-    retry: 5,
-  },
   { name: "plugin", func: resolvePlugin, retry: 5, winOnly: true },
   { name: "service", func: resolveService, retry: 5, winOnly: true },
   { name: "install", func: resolveInstall, retry: 5, winOnly: true },
