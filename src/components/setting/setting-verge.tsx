@@ -30,7 +30,6 @@ import { MiscViewer } from "./mods/misc-viewer";
 import { ThemeViewer } from "./mods/theme-viewer";
 import { GuardState } from "./mods/guard-state";
 import { LayoutViewer } from "./mods/layout-viewer";
-import { UpdateViewer } from "./mods/update-viewer";
 import getSystem from "@/utils/get-system";
 import { routers } from "@/pages/_routers";
 
@@ -63,19 +62,6 @@ const SettingVerge = ({ onError }: Props) => {
     mutateVerge({ ...verge, ...patch }, false);
   };
 
-  const onCheckUpdate = useLockFn(async () => {
-    try {
-      const info = await checkUpdate();
-      if (!info?.shouldUpdate) {
-        Notice.success("No Updates Available");
-      } else {
-        updateRef.current?.open();
-      }
-    } catch (err: any) {
-      Notice.error(err.message || err.toString());
-    }
-  });
-
   return (
     <SettingList title={t("Verge Setting")}>
       <ThemeViewer ref={themeRef} />
@@ -83,7 +69,6 @@ const SettingVerge = ({ onError }: Props) => {
       <HotkeyViewer ref={hotkeyRef} />
       <MiscViewer ref={miscRef} />
       <LayoutViewer ref={layoutRef} />
-      <UpdateViewer ref={updateRef} />
 
       <SettingItem label={t("Language")}>
         <GuardState
@@ -296,17 +281,6 @@ const SettingVerge = ({ onError }: Props) => {
           size="small"
           sx={{ my: "2px" }}
           onClick={openLogsDir}
-        >
-          <ArrowForward />
-        </IconButton>
-      </SettingItem>
-
-      <SettingItem label={t("Check for Updates")}>
-        <IconButton
-          color="inherit"
-          size="small"
-          sx={{ my: "2px" }}
-          onClick={onCheckUpdate}
         >
           <ArrowForward />
         </IconButton>
