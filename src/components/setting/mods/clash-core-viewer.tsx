@@ -15,7 +15,7 @@ import {
   ListItemText,
 } from "@mui/material";
 import { changeClashCore, restartSidecar } from "@/services/cmds";
-import { closeAllConnections, upgradeCore } from "@/services/api";
+import { closeAllConnections } from "@/services/api";
 import { grantPermission } from "@/services/cmds";
 import getSystem from "@/utils/get-system";
 
@@ -60,7 +60,12 @@ export const ClashCoreViewer = forwardRef<DialogRef>((props, ref) => {
       await grantPermission(core);
       // 自动重启
       if (core === clash_core) await restartSidecar();
-      Notice.success(t("Permissions Granted Successfully for _clash Core", { core: `${core}` }), 1000);
+      Notice.success(
+        t("Permissions Granted Successfully for _clash Core", {
+          core: `${core}`,
+        }),
+        1000
+      );
     } catch (err: any) {
       Notice.error(err?.message || err.toString());
     }
@@ -75,18 +80,6 @@ export const ClashCoreViewer = forwardRef<DialogRef>((props, ref) => {
     }
   });
 
-  const onUpgrade = useLockFn(async () => {
-    try {
-      setUpgrading(true);
-      await upgradeCore();
-      setUpgrading(false);
-      Notice.success(t(`Core Version Updated`), 1000);
-    } catch (err: any) {
-      setUpgrading(false);
-      Notice.error(err?.response.data.message || err.toString());
-    }
-  });
-
   return (
     <BaseDialog
       open={open}
@@ -94,17 +87,6 @@ export const ClashCoreViewer = forwardRef<DialogRef>((props, ref) => {
         <Box display="flex" justifyContent="space-between">
           {t("Clash Core")}
           <Box>
-            <LoadingButton
-              variant="contained"
-              size="small"
-              startIcon={<SwitchAccessShortcut />}
-              loadingPosition="start"
-              loading={upgrading}
-              sx={{ marginRight: "8px" }}
-              onClick={onUpgrade}
-            >
-              {t("Upgrade")}
-            </LoadingButton>
             <Button
               variant="contained"
               size="small"
