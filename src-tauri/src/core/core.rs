@@ -63,7 +63,7 @@ impl CoreManager {
         let test_dir = dirs::app_home_dir()?.join("test");
         let test_dir = dirs::path_to_str(&test_dir)?;
 
-        let output = Command::new_sidecar(clash_core)?
+        let output = Command::new(clash_core)
             .args(["-t", "-d", test_dir, "-f", config_path])
             .output()?;
 
@@ -153,10 +153,9 @@ impl CoreManager {
         }
 
         let config_path = dirs::path_to_str(&config_path)?;
-
         let args = vec!["-d", app_dir, "-f", config_path];
 
-        let cmd = Command::new_sidecar(clash_core)?;
+        let cmd = Command::new(clash_core);
         let (mut rx, cmd_child) = cmd.args(args).spawn()?;
 
         let mut sidecar = self.sidecar.lock();
