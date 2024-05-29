@@ -145,8 +145,7 @@ impl CoreManager {
             "clash-meta-alpha" => vec!["-d", app_dir, "-f", config_path],
             _ => vec!["-d", app_dir, "-f", config_path],
         };
-
-        let cmd = Command::new_sidecar(clash_core)?;
+        let cmd = Command::new(clash_core);
         let (mut rx, cmd_child) = cmd.args(args).spawn()?;
 
         // 将pid写入文件中
