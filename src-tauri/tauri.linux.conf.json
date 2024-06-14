@@ -3,24 +3,6 @@
   "tauri": {
     "systemTray": {
       "iconPath": "icons/tray-icon.ico"
-    },
-    "bundle": {
-      "identifier": "io.github.clash-verge-rev.clash-verge-rev",
-      "targets": ["deb", "rpm"],
-      "deb": {
-        "depends": ["openssl"],
-        "desktopTemplate": "./template/clash-verge.desktop",
-        "provides": ["clash-verge", "clash-meta"],
-        "conflicts": ["clash-verge", "clash-meta"],
-        "replaces": ["clash-verge", "clash-meta"]
-      },
-      "rpm": {
-        "depends": ["openssl"],
-        "desktopTemplate": "./template/clash-verge.desktop",
-        "provides": ["clash-verge", "clash-meta"],
-        "conflicts": ["clash-verge", "clash-meta"],
-        "obsoletes": ["clash-verge", "clash-meta"]
-      }
     }
   }
 }
