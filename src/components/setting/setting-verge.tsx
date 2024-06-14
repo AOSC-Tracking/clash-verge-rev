@@ -1,14 +1,7 @@
 import { useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { open } from "@tauri-apps/api/dialog";
-import {
-  Button,
-  MenuItem,
-  Select,
-  Input,
-  Typography,
-  Box,
-} from "@mui/material";
+import { Button, MenuItem, Select, Input, Typography } from "@mui/material";
 import {
   exitApp,
   openAppDir,
@@ -17,10 +10,9 @@ import {
   openDevTools,
   copyClashEnv,
 } from "@/services/cmds";
-import { checkUpdate } from "@tauri-apps/api/updater";
 import { useVerge } from "@/hooks/use-verge";
 import { version } from "@root/package.json";
-import { DialogRef, Notice } from "@/components/base";
+import { DialogRef } from "@/components/base";
 import { SettingList, SettingItem } from "./mods/setting-comp";
 import { ThemeModeSwitch } from "./mods/theme-mode-switch";
 import { ConfigViewer } from "./mods/config-viewer";
@@ -29,7 +21,6 @@ import { MiscViewer } from "./mods/misc-viewer";
 import { ThemeViewer } from "./mods/theme-viewer";
 import { GuardState } from "./mods/guard-state";
 import { LayoutViewer } from "./mods/layout-viewer";
-import { UpdateViewer } from "./mods/update-viewer";
 import getSystem from "@/utils/get-system";
 import { routers } from "@/pages/_routers";
 import { TooltipIcon } from "@/components/base/base-tooltip-icon";
@@ -58,29 +49,10 @@ const SettingVerge = ({ onError }: Props) => {
   const miscRef = useRef<DialogRef>(null);
   const themeRef = useRef<DialogRef>(null);
   const layoutRef = useRef<DialogRef>(null);
-  const updateRef = useRef<DialogRef>(null);
 
   const onChangeData = (patch: Partial<IVergeConfig>) => {
     mutateVerge({ ...verge, ...patch }, false);
   };
-
-  const onCheckUpdate = async () => {
-    try {
-      const info = await checkUpdate();
-      if (!info?.shouldUpdate) {
-        Notice.success(t("Currently on the Latest Version"));
-      } else {
-        updateRef.current?.open();
-      }
-    } catch (err: any) {
-      Notice.error(err.message || err.toString());
-    }
-  };
-
-  const onCopyClashEnv = useCallback(async () => {
-    await copyClashEnv();
-    Notice.success(t("Copy Success"), 1000);
-  }, []);
 
   return (
     <SettingList title={t("Verge Setting")}>
@@ -89,7 +61,6 @@ const SettingVerge = ({ onError }: Props) => {
       <HotkeyViewer ref={hotkeyRef} />
       <MiscViewer ref={miscRef} />
       <LayoutViewer ref={layoutRef} />
-      <UpdateViewer ref={updateRef} />
 
       <SettingItem label={t("Language")}>
         <GuardState
@@ -140,9 +111,7 @@ const SettingVerge = ({ onError }: Props) => {
 
       <SettingItem
         label={t("Copy Env Type")}
-        extra={
-          <TooltipIcon icon={ContentCopyRounded} onClick={onCopyClashEnv} />
-        }
+        extra={<TooltipIcon icon={ContentCopyRounded} onClick={copyClashEnv} />}
       >
         <GuardState
           value={env_type ?? (OS === "windows" ? "powershell" : "bash")}
@@ -255,8 +224,6 @@ const SettingVerge = ({ onError }: Props) => {
       <SettingItem onClick={openCoreDir} label={t("Open Core Dir")} />
 
       <SettingItem onClick={openLogsDir} label={t("Open Logs Dir")} />
-
-      <SettingItem onClick={onCheckUpdate} label={t("Check for Updates")} />
 
       <SettingItem onClick={openDevTools} label={t("Open Dev Tools")} />
 
