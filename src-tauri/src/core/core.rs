@@ -86,7 +86,7 @@ impl CoreManager {
 
         let mut system = System::new();
         system.refresh_all();
-        let procs = system.processes_by_name("verge-mihomo");
+        let procs = system.processes_by_name("mihomo");
         for proc in procs {
             log::debug!(target: "app", "kill all clash process");
             proc.kill();
@@ -132,13 +132,13 @@ impl CoreManager {
         let app_dir = dirs::path_to_str(&app_dir)?;
 
         let clash_core = { Config::verge().latest().clash_core.clone() };
-        let mut clash_core = clash_core.unwrap_or("verge-mihomo".into());
+        let mut clash_core = clash_core.unwrap_or("mihomo".into());
 
         // compatibility
         if clash_core.contains("clash") {
-            clash_core = "verge-mihomo".to_string();
+            clash_core = "mihomo".to_string();
             Config::verge().draft().patch_config(IVerge {
-                clash_core: Some("verge-mihomo".to_string()),
+                clash_core: Some("mihomo".to_string()),
                 ..IVerge::default()
             });
             Config::verge().apply();
@@ -238,7 +238,7 @@ impl CoreManager {
 
         let mut system = System::new();
         system.refresh_all();
-        let procs = system.processes_by_name("verge-mihomo");
+        let procs = system.processes_by_name("mihomo");
         for proc in procs {
             log::debug!(target: "app", "kill all clash process");
             proc.kill();
@@ -249,7 +249,7 @@ impl CoreManager {
     /// 切换核心
     pub async fn change_core(&self, clash_core: Option<String>) -> Result<()> {
         let clash_core = clash_core.ok_or(anyhow::anyhow!("clash core is null"))?;
-        const CLASH_CORES: [&str; 2] = ["verge-mihomo", "verge-mihomo-alpha"];
+        const CLASH_CORES: [&str; 2] = ["mihomo", "mihomo-alpha"];
 
         if !CLASH_CORES.contains(&clash_core.as_str()) {
             bail!("invalid clash core name \"{clash_core}\"");
