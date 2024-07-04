@@ -201,7 +201,7 @@ impl IVerge {
 
     pub fn template() -> Self {
         Self {
-            clash_core: Some("verge-mihomo".into()),
+            clash_core: Some("mihomo".into()),
             language: Some("zh".into()),
             theme_mode: Some("system".into()),
             #[cfg(not(target_os = "windows"))]

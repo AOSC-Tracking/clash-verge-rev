@@ -157,8 +157,8 @@ function clashMetaAlpha() {
   const zipFile = `${name}-${META_ALPHA_VERSION}.${urlExt}`;
 
   return {
-    name: "verge-mihomo-alpha",
-    targetFile: `verge-mihomo-alpha-${SIDECAR_HOST}${isWin ? ".exe" : ""}`,
+    name: "mihomo-alpha",
+    targetFile: `mihomo-alpha-${SIDECAR_HOST}${isWin ? ".exe" : ""}`,
     exeFile,
     zipFile,
     downloadURL,
@@ -174,8 +174,8 @@ function clashMeta() {
   const zipFile = `${name}-${META_VERSION}.${urlExt}`;
 
   return {
-    name: "verge-mihomo",
-    targetFile: `verge-mihomo-${SIDECAR_HOST}${isWin ? ".exe" : ""}`,
+    name: "mihomo",
+    targetFile: `mihomo-${SIDECAR_HOST}${isWin ? ".exe" : ""}`,
     exeFile,
     zipFile,
     downloadURL,
