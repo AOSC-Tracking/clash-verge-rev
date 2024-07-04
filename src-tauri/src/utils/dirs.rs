@@ -90,7 +90,7 @@ pub fn profiles_path() -> Result<PathBuf> {
 
 #[cfg(not(target_os = "windows"))]
 pub fn service_path() -> Result<PathBuf> {
-    Ok(app_resources_dir()?.join("clash-verge-service"))
+    Ok(which::which("clash-verge-service")?)
 }
 
 #[cfg(windows)]
