@@ -24,7 +24,6 @@ import {
   saveProfileFile,
 } from "@/services/cmds";
 import { Notice } from "@/components/base";
-import { GroupsEditorViewer } from "@/components/profile/groups-editor-viewer";
 import { RulesEditorViewer } from "@/components/profile/rules-editor-viewer";
 import { EditorViewer } from "@/components/profile/editor-viewer";
 import { ProfileBox } from "./profile-box";
@@ -499,15 +498,6 @@ export const ProfileItem = (props: Props) => {
         open={proxiesOpen}
         onSave={onSave}
         onClose={() => setProxiesOpen(false)}
-      />
-      <GroupsEditorViewer
-        mergeUid={option?.merge ?? ""}
-        proxiesUid={option?.proxies ?? ""}
-        profileUid={uid}
-        property={option?.groups ?? ""}
-        open={groupsOpen}
-        onSave={onSave}
-        onClose={() => setGroupsOpen(false)}
       />
       <EditorViewer
         open={mergeOpen}
