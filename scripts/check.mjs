@@ -148,21 +148,6 @@ async function getLatestReleaseVersion() {
   }
 }
 
-/*
- * check available
- */
-if (!META_MAP[`${platform}-${arch}`]) {
-  throw new Error(
-    `clash meta alpha unsupported platform "${platform}-${arch}"`,
-  );
-}
-
-if (!META_ALPHA_MAP[`${platform}-${arch}`]) {
-  throw new Error(
-    `clash meta alpha unsupported platform "${platform}-${arch}"`,
-  );
-}
-
 /**
  * core info
  */
