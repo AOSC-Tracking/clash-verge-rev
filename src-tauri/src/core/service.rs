@@ -4,7 +4,7 @@ use anyhow::{bail, Context, Result};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::path::PathBuf;
-use std::{env::current_exe, process::Command as StdCommand};
+use std::process::Command as StdCommand;
 use tokio::time::Duration;
 
 // Windows only
@@ -231,11 +231,6 @@ pub(super) async fn run_core_by_service(config_file: &PathBuf) -> Result<()> {
     let clash_core = { Config::verge().latest().clash_core.clone() };
     let clash_core = clash_core.unwrap_or("mihomo".into());
 
-    let bin_ext = if cfg!(windows) { ".exe" } else { "" };
-    let clash_bin = format!("{clash_core}{bin_ext}");
-    let bin_path = current_exe()?.with_file_name(clash_bin);
-    let bin_path = dirs::path_to_str(&bin_path)?;
-
     let config_dir = dirs::app_home_dir()?;
     let config_dir = dirs::path_to_str(&config_dir)?;
 
@@ -244,9 +239,11 @@ pub(super) async fn run_core_by_service(config_file: &PathBuf) -> Result<()> {
 
     let config_file = dirs::path_to_str(config_file)?;
 
+    let bin = which::which(&clash_core)?.to_string_lossy().to_string();
+
     let mut map = HashMap::new();
     map.insert("core_type", clash_core.as_str());
-    map.insert("bin_path", bin_path);
+    map.insert("bin_path", &bin);
     map.insert("config_dir", config_dir);
     map.insert("config_file", config_file);
     map.insert("log_file", log_path);
