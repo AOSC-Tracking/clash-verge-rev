@@ -75,11 +75,13 @@ pub async fn reinstall_service() -> Result<()> {
 #[cfg(target_os = "linux")]
 pub async fn reinstall_service() -> Result<()> {
     log::info!(target:"app", "reinstall service");
+    use std::path::Path;
     use users::get_effective_uid;
 
-    let install_path = tauri::utils::platform::current_exe()?.with_file_name("install-service");
+    let service_script_path = Path::new("/usr/libexec");
 
-    let uninstall_path = tauri::utils::platform::current_exe()?.with_file_name("uninstall-service");
+    let install_path = service_script_path.join("clash-verge-install-service");
+    let uninstall_path = service_script_path.join("clash-verge-uninstall-service");
 
     if !install_path.exists() {
         bail!(format!("installer not found: {install_path:?}"));
