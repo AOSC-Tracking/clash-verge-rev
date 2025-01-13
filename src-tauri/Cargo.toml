@@ -91,13 +91,6 @@ default = ["custom-protocol"]
 custom-protocol = ["tauri/custom-protocol"]
 verge-dev = []
 
-[profile.release]
-panic = "abort"
-codegen-units = 1
-lto = true
-opt-level = "s"
-strip = true
-
 [profile.dev]
 incremental = true
 
