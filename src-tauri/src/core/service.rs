@@ -230,9 +230,11 @@ pub fn reinstall_service() -> Result<()> {
 #[cfg(target_os = "linux")]
 pub fn uninstall_service() -> Result<()> {
     logging!(info, Type::Service, true, "uninstall service");
+    use std::path::Path;
     use users::get_effective_uid;
 
-    let uninstall_path = tauri::utils::platform::current_exe()?.with_file_name("uninstall-service");
+    let service_script_path = Path::new("/usr/libexec");
+    let uninstall_path = service_script_path.join("clash-verge-uninstall-service");
 
     if !uninstall_path.exists() {
         bail!(format!("uninstaller not found: {uninstall_path:?}"));
@@ -270,9 +272,11 @@ pub fn uninstall_service() -> Result<()> {
 #[cfg(target_os = "linux")]
 pub fn install_service() -> Result<()> {
     logging!(info, Type::Service, true, "install service");
+    use std::path::Path;
     use users::get_effective_uid;
 
-    let install_path = tauri::utils::platform::current_exe()?.with_file_name("install-service");
+    let service_script_path = Path::new("/usr/libexec");
+    let install_path = service_script_path.join("clash-verge-install-service");
 
     if !install_path.exists() {
         bail!(format!("installer not found: {install_path:?}"));
