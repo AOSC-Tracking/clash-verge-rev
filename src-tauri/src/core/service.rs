@@ -658,10 +658,10 @@ fn run_windows_service_installer(arguments: &[std::ffi::OsString]) -> Result<()>
 #[cfg(target_os = "linux")]
 fn uninstall_service() -> Result<()> {
     logging!(info, Type::Service, "uninstall service");
+    use std::path::Path;
 
-    let uninstall_path = packaged_service_tool_path("clash-verge-service-uninstall", || {
-        Ok(tauri::utils::platform::current_exe()?.with_file_name("clash-verge-service-uninstall"))
-    })?;
+    let service_script_path = Path::new("/usr/libexec");
+    let uninstall_path = service_script_path.join("clash-verge-uninstall-service");
 
     if !uninstall_path.exists() {
         bail!(format!("uninstaller not found: {uninstall_path:?}"));
@@ -709,10 +709,10 @@ fn uninstall_service() -> Result<()> {
 #[cfg(target_os = "linux")]
 fn install_service() -> Result<()> {
     logging!(info, Type::Service, "install service");
+    use std::path::Path;
 
-    let install_path = packaged_service_tool_path("clash-verge-service-install", || {
-        Ok(tauri::utils::platform::current_exe()?.with_file_name("clash-verge-service-install"))
-    })?;
+    let service_script_path = Path::new("/usr/libexec");
+    let install_path = service_script_path.join("clash-verge-install-service");
 
     if !install_path.exists() {
         bail!(format!("installer not found: {install_path:?}"));
