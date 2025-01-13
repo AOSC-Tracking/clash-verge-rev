@@ -22,16 +22,6 @@ pub static PROFILE_YAML: &str = "profiles.yaml";
 
 /// init portable flag
 pub fn init_portable_flag() -> Result<()> {
-    use tauri::utils::platform::current_exe;
-
-    let app_exe = current_exe()?;
-    if let Some(dir) = app_exe.parent() {
-        let dir = PathBuf::from(dir).join(".config/PORTABLE");
-
-        if dir.exists() {
-            PORTABLE_FLAG.get_or_init(|| true);
-        }
-    }
     PORTABLE_FLAG.get_or_init(|| false);
     Ok(())
 }
