@@ -640,18 +640,6 @@ const resolveUnSetDnsScript = () =>
 // Tasks
 // =======================
 const tasks = [
-  {
-    name: "verge-mihomo-alpha",
-    func: () =>
-      getLatestAlphaVersion().then(() => resolveSidecar(clashMetaAlpha())),
-    retry: 5,
-  },
-  {
-    name: "verge-mihomo",
-    func: () =>
-      getLatestReleaseVersion().then(() => resolveSidecar(clashMeta())),
-    retry: 5,
-  },
   { name: "plugin", func: resolvePlugin, retry: 5, winOnly: true },
   { name: "service", func: resolveService, retry: 5 },
   { name: "install", func: resolveInstall, retry: 5 },
