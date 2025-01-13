@@ -586,10 +586,10 @@ fn uninstall_service() -> Result<()> {
 #[cfg(target_os = "linux")]
 fn uninstall_service() -> Result<()> {
     logging!(info, Type::Service, "uninstall service");
+    use std::path::Path;
 
-    let uninstall_path = packaged_service_tool_path("clash-verge-service-uninstall", || {
-        Ok(tauri::utils::platform::current_exe()?.with_file_name("clash-verge-service-uninstall"))
-    })?;
+    let service_script_path = Path::new("/usr/libexec");
+    let uninstall_path = service_script_path.join("clash-verge-uninstall-service");
 
     if !uninstall_path.exists() {
         bail!(format!("uninstaller not found: {uninstall_path:?}"));
@@ -696,10 +696,10 @@ fn install_service() -> Result<()> {
 
 fn invoke_service_install(cores: &[clash_verge_service_ipc::management::CoreSource], core_only: bool) -> Result<()> {
     let name = format!("clash-verge-service-install{}", std::env::consts::EXE_SUFFIX);
+    #[cfg(target_os = "linux")]
+    let installer = std::path::Path::new("/usr/libexec").join("clash-verge-install-service");
+    #[cfg(not(target_os = "linux"))]
     let installer = packaged_service_tool_path(&name, || {
-        #[cfg(target_os = "linux")]
-        let executable = tauri::utils::platform::current_exe()?;
-        #[cfg(not(target_os = "linux"))]
         let executable = dirs::service_path()?;
         Ok(executable.with_file_name(&name))
     })?;
