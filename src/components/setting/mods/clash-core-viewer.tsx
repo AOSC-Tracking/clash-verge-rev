@@ -18,7 +18,7 @@ import {
   ListItemText,
 } from "@mui/material";
 import { changeClashCore, restartCore } from "@/services/cmds";
-import { closeAllConnections, upgradeCore } from "@/services/api";
+import { closeAllConnections } from "@/services/api";
 
 const VALID_CORE = [
   { name: "Mihomo", core: "mihomo", chip: "Release Version" },
@@ -65,18 +65,6 @@ export const ClashCoreViewer = forwardRef<DialogRef>((props, ref) => {
     }
   });
 
-  const onUpgrade = useLockFn(async () => {
-    try {
-      setUpgrading(true);
-      await upgradeCore();
-      setUpgrading(false);
-      Notice.success(t(`Core Version Updated`), 1000);
-    } catch (err: any) {
-      setUpgrading(false);
-      Notice.error(err?.response.data.message || err.toString());
-    }
-  });
-
   return (
     <BaseDialog
       open={open}
@@ -84,17 +72,6 @@ export const ClashCoreViewer = forwardRef<DialogRef>((props, ref) => {
         <Box display="flex" justifyContent="space-between">
           {t("Clash Core")}
           <Box>
-            <LoadingButton
-              variant="contained"
-              size="small"
-              startIcon={<SwitchAccessShortcutRounded />}
-              loadingPosition="start"
-              loading={upgrading}
-              sx={{ marginRight: "8px" }}
-              onClick={onUpgrade}
-            >
-              {t("Upgrade")}
-            </LoadingButton>
             <Button
               variant="contained"
               size="small"
