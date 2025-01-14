@@ -107,5 +107,10 @@
     "endOfLine": "lf"
   },
   "type": "module",
-  "packageManager": "pnpm@9.13.2"
+  "packageManager": "pnpm@9.13.2",
+  "pnpm": {
+    "overrides": {
+      "rollup": "npm:@rollup/wasm-node"
+    }
+  }
 }
