@@ -20,7 +20,6 @@ import {
 import { changeClashCore, restartCore } from "@/services/cmds";
 import {
   closeAllConnections,
-  upgradeCore,
   forceRefreshClashConfig,
 } from "@/services/cmds";
 import { showNotice } from "@/services/noticeService";
@@ -86,22 +85,6 @@ export const ClashCoreViewer = forwardRef<DialogRef>((props, ref) => {
     }
   });
 
-  const onUpgrade = useLockFn(async () => {
-    try {
-      setUpgrading(true);
-      await upgradeCore();
-      setUpgrading(false);
-      showNotice("success", t(`Core Version Updated`));
-    } catch (err: any) {
-      setUpgrading(false);
-      const errMsg = err.response?.data?.message || err.toString();
-      const showMsg = errMsg.includes("already using latest version")
-        ? "Already Using Latest Core Version"
-        : errMsg;
-      showNotice("error", t(showMsg));
-    }
-  });
-
   return (
     <BaseDialog
       open={open}
@@ -109,18 +92,6 @@ export const ClashCoreViewer = forwardRef<DialogRef>((props, ref) => {
         <Box display="flex" justifyContent="space-between">
           {t("Clash Core")}
           <Box>
-            <LoadingButton
-              variant="contained"
-              size="small"
-              startIcon={<SwitchAccessShortcutRounded />}
-              loadingPosition="start"
-              loading={upgrading}
-              disabled={restarting || changingCore !== null}
-              sx={{ marginRight: "8px" }}
-              onClick={onUpgrade}
-            >
-              {t("Upgrade")}
-            </LoadingButton>
             <LoadingButton
               variant="contained"
               size="small"
