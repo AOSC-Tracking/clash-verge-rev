@@ -100,7 +100,7 @@ const SettingVergeAdvanced = ({ onError: _ }: Props) => {
         label={t("settings.components.verge.advanced.fields.openCoreDir")}
       />
 
-      <SettingItem onClick={openLogsDir} label={t("Open Logs Dir")} />
+      <SettingItem onClick={openLogsDir} label={t("settings.components.verge.advanced.fields.openLogsDir")} />
 
       <SettingItem
         onClick={openDevTools}
