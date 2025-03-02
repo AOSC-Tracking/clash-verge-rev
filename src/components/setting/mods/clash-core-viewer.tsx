@@ -22,7 +22,7 @@ import { closeAllConnections, upgradeCore } from "@/services/api";
 import { showNotice } from "@/services/noticeService";
 
 const VALID_CORE = [
-  { name: "Mihomo", core: "verge-mihomo", chip: "Release Version" },
+  { name: "Mihomo", core: "mihomo", chip: "Release Version" },
 ];
 
 export const ClashCoreViewer = forwardRef<DialogRef>((props, ref) => {
@@ -40,7 +40,7 @@ export const ClashCoreViewer = forwardRef<DialogRef>((props, ref) => {
     close: () => setOpen(false),
   }));
 
-  const { clash_core = "verge-mihomo" } = verge ?? {};
+  const { clash_core = "mihomo" } = verge ?? {};
 
   const onCoreChange = useLockFn(async (core: string) => {
     if (core === clash_core) return;
