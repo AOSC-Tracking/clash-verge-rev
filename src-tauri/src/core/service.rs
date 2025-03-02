@@ -571,7 +571,7 @@ pub(super) async fn start_with_existing_service(config_file: &PathBuf) -> Result
     log::info!(target:"app", "attempting to start core with existing service");
 
     let clash_core = { Config::verge().latest().clash_core.clone() };
-    let clash_core = clash_core.unwrap_or("verge-mihomo".into());
+    let clash_core = clash_core.unwrap_or("mihomo".into());
 
     let bin_ext = if cfg!(windows) { ".exe" } else { "" };
     let clash_bin = format!("{clash_core}{bin_ext}");
