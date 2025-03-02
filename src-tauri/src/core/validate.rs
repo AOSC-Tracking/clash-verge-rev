@@ -358,9 +358,7 @@ impl CoreConfigValidator {
         let app_dir_str = dirs::path_to_str(&app_dir)?;
         logging!(info, Type::Validate, "验证目录: {}", app_dir_str);
 
-        let command = app_handle.shell().sidecar(clash_core.as_str()).map_err(|error| {
-            anyhow::anyhow!("failed to build validation command for core {clash_core:?}: {error:#}")
-        })?;
+        let command = app_handle.shell().command(clash_core.as_str());
         let command = command.args(["-t", "-d", app_dir_str, "-f", config_path]);
         let output = command.output().await.map_err(|error| {
             anyhow::anyhow!(
