@@ -24,7 +24,7 @@ import { changeClashCore, restartCore } from "@/services/cmds";
 import { showNotice } from "@/services/noticeService";
 
 const VALID_CORE = [
-  { name: "Mihomo", core: "verge-mihomo", chip: "Release Version" },
+  { name: "Mihomo", core: "mihomo", chip: "Release Version" },
 ];
 
 export function ClashCoreViewer({ ref }: { ref?: Ref<DialogRef> }) {
@@ -42,7 +42,7 @@ export function ClashCoreViewer({ ref }: { ref?: Ref<DialogRef> }) {
     close: () => setOpen(false),
   }));
 
-  const { clash_core = "verge-mihomo" } = verge ?? {};
+  const { clash_core = "mihomo" } = verge ?? {};
 
   const onCoreChange = useLockFn(async (core: string) => {
     if (core === clash_core) return;
