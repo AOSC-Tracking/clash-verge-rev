@@ -340,32 +340,31 @@ const Layout = () => {
         {/* Custom titlebar - rendered only when decorated is false, memoized for performance */}
         {customTitlebar}
 
-        <div className="layout-content">
-          <div className="layout-content__left">
-            <div className="the-logo" data-tauri-drag-region="false">
-              <div
-                data-tauri-drag-region="true"
-                style={{
-                  height: '27px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <SvgIcon
-                  component={isDark ? iconDark : iconLight}
+          <div className="layout-content">
+            <div className="layout-content__left">
+              <div className="the-logo" data-tauri-drag-region="false">
+                <div
+                  data-tauri-drag-region="true"
                   style={{
-                    height: '36px',
-                    width: '36px',
-                    marginTop: '-3px',
-                    marginRight: '5px',
-                    marginLeft: '-3px',
+                    height: '27px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
                   }}
-                  inheritViewBox
-                />
-                <LogoSvg fill={isDark ? 'white' : 'black'} />
+                >
+                  <SvgIcon
+                    component={isDark ? iconDark : iconLight}
+                    style={{
+                      height: '36px',
+                      width: '36px',
+                      marginTop: '-3px',
+                      marginRight: '5px',
+                      marginLeft: '-3px',
+                    }}
+                    inheritViewBox
+                  />
+                  <LogoSvg fill={isDark ? 'white' : 'black'} />
+                </div>
               </div>
-              <UpdateButton className="the-newbtn" />
-            </div>
 
             {menuUnlocked && (
               <Box
