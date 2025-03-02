@@ -33,7 +33,7 @@ impl CoreManager {
 
         let (mut rx, child) = app_handle
             .shell()
-            .sidecar(clash_core.as_str())?
+            .command(clash_core.as_str())
             .args([
                 "-d",
                 dirs::path_to_str(&config_dir)?,
