@@ -288,7 +288,7 @@ impl CoreManager {
         println!("[core配置验证] 运行子进程验证配置");
         let output = app_handle
             .shell()
-            .sidecar(clash_core)?
+            .command(clash_core)
             .args(["-t", "-d", test_dir, "-f", config_path])
             .output()
             .await?;
