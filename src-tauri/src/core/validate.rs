@@ -343,7 +343,7 @@ impl CoreConfigValidator {
         let command =
             app_handle
                 .shell()
-                .sidecar(clash_core.as_str())?
+                .command(clash_core.as_str())
                 .args(["-t", "-d", app_dir_str, "-f", config_path]);
         let output = command.output().await?;
 

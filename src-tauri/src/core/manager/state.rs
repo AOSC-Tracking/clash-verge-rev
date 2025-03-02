@@ -34,7 +34,7 @@ impl CoreManager {
         let previous_mask = unsafe { tauri_plugin_clash_verge_sysinfo::libc::umask(0o007) };
         let (mut rx, child) = app_handle
             .shell()
-            .sidecar(clash_core.as_str())?
+            .command(clash_core.as_str())
             .args([
                 "-d",
                 dirs::path_to_str(&config_dir)?,
