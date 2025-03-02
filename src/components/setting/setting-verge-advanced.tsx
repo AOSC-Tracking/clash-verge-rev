@@ -24,7 +24,6 @@ import { LiteModeViewer } from "./mods/lite-mode-viewer";
 import { MiscViewer } from "./mods/misc-viewer";
 import { SettingItem, SettingList } from "./mods/setting-comp";
 import { ThemeViewer } from "./mods/theme-viewer";
-import { UpdateViewer } from "./mods/update-viewer";
 
 interface Props {
   onError?: (err: Error) => void;
@@ -38,24 +37,9 @@ const SettingVergeAdvanced = ({ onError: _ }: Props) => {
   const miscRef = useRef<DialogRef>(null);
   const themeRef = useRef<DialogRef>(null);
   const layoutRef = useRef<DialogRef>(null);
-  const updateRef = useRef<DialogRef>(null);
   const backupRef = useRef<DialogRef>(null);
   const liteModeRef = useRef<DialogRef>(null);
 
-  const onCheckUpdate = async () => {
-    try {
-      const info = await checkUpdate();
-      if (!info?.available) {
-        showNotice.success(
-          "settings.components.verge.advanced.notifications.latestVersion",
-        );
-      } else {
-        updateRef.current?.open();
-      }
-    } catch (err: any) {
-      showNotice.error(err);
-    }
-  };
 
   const onExportDiagnosticInfo = useCallback(async () => {
     await exportDiagnosticInfo();
@@ -81,7 +65,6 @@ const SettingVergeAdvanced = ({ onError: _ }: Props) => {
       <HotkeyViewer ref={hotkeyRef} />
       <MiscViewer ref={miscRef} />
       <LayoutViewer ref={layoutRef} />
-      <UpdateViewer ref={updateRef} />
       <BackupViewer ref={backupRef} />
       <LiteModeViewer ref={liteModeRef} />
 
@@ -117,15 +100,7 @@ const SettingVergeAdvanced = ({ onError: _ }: Props) => {
         label={t("settings.components.verge.advanced.fields.openCoreDir")}
       />
 
-      <SettingItem
-        onClick={openLogsDir}
-        label={t("settings.components.verge.advanced.fields.openLogsDir")}
-      />
-
-      <SettingItem
-        onClick={onCheckUpdate}
-        label={t("settings.components.verge.advanced.fields.checkUpdates")}
-      />
+      <SettingItem onClick={openLogsDir} label={t("Open Logs Dir")} />
 
       <SettingItem
         onClick={openDevTools}

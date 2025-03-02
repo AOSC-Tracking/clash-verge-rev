@@ -83,36 +83,6 @@ export const SystemInfoCard = () => {
         }
       })
       .catch(console.error);
-
-    // 获取最后检查更新时间
-    const lastCheck = localStorage.getItem("last_check_update");
-    if (lastCheck) {
-      try {
-        const timestamp = parseInt(lastCheck, 10);
-        if (!isNaN(timestamp)) {
-          dispatchSystemState({
-            type: "set-last-check-update",
-            payload: new Date(timestamp).toLocaleString(),
-          });
-        }
-      } catch (e) {
-        console.error("Error parsing last check update time", e);
-      }
-    } else if (verge?.auto_check_update) {
-      // 如果启用了自动检查更新但没有记录，设置当前时间并延迟检查
-      const now = Date.now();
-      localStorage.setItem("last_check_update", now.toString());
-      dispatchSystemState({
-        type: "set-last-check-update",
-        payload: new Date(now).toLocaleString(),
-      });
-
-      timeoutId = window.setTimeout(() => {
-        if (verge?.auto_check_update) {
-          checkUpdate().catch(console.error);
-        }
-      }, 5000);
-    }
     return () => {
       if (timeoutId !== undefined) {
         window.clearTimeout(timeoutId);
@@ -160,23 +130,6 @@ export const SystemInfoCard = () => {
       installServiceAndRestartCore();
     }
   }, [isSidecarMode, isAdminMode, installServiceAndRestartCore]);
-
-  // 检查更新
-  const onCheckUpdate = useLockFn(async () => {
-    try {
-      const info = await checkUpdate();
-      if (!info?.available) {
-        showNotice.success(
-          "settings.components.verge.advanced.notifications.latestVersion",
-        );
-      } else {
-        showNotice.info("shared.feedback.notifications.updateAvailable", 2000);
-        goToSettings();
-      }
-    } catch (err) {
-      showNotice.error(err);
-    }
-  });
 
   // 是否启用自启动
   const autoLaunchEnabled = useMemo(
@@ -326,24 +279,6 @@ export const SystemInfoCard = () => {
           >
             {getModeIcon()}
             {getModeText()}
-          </Typography>
-        </Stack>
-        <Divider />
-        <Stack direction="row" justifyContent="space-between">
-          <Typography variant="body2" color="text.secondary">
-            {t("home.components.systemInfo.fields.lastCheckUpdate")}
-          </Typography>
-          <Typography
-            variant="body2"
-            fontWeight="medium"
-            onClick={onCheckUpdate}
-            sx={{
-              cursor: "pointer",
-              textDecoration: "underline",
-              "&:hover": { opacity: 0.7 },
-            }}
-          >
-            {systemState.lastCheckUpdate}
           </Typography>
         </Stack>
         <Divider />
