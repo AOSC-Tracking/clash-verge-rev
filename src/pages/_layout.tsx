@@ -46,7 +46,6 @@ import { NoticeManager } from "@/components/base/NoticeManager";
 import { WindowControls } from "@/components/controller/window-controller";
 import { LayoutItem } from "@/components/layout/layout-item";
 import { LayoutTraffic } from "@/components/layout/layout-traffic";
-import { UpdateButton } from "@/components/layout/update-button";
 import { useCustomTheme } from "@/components/layout/use-custom-theme";
 import { useI18n } from "@/hooks/use-i18n";
 import { useVerge } from "@/hooks/use-verge";
@@ -415,7 +414,6 @@ const Layout = () => {
                   />
                   <LogoSvg fill={isDark ? "white" : "black"} />
                 </div>
-                <UpdateButton className="the-newbtn" />
               </div>
 
               {menuUnlocked && (

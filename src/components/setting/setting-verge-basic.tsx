@@ -67,7 +67,6 @@ const SettingVergeBasic = ({ onError }: Props) => {
   const miscRef = useRef<DialogRef>(null);
   const themeRef = useRef<DialogRef>(null);
   const layoutRef = useRef<DialogRef>(null);
-  const updateRef = useRef<DialogRef>(null);
   const backupRef = useRef<DialogRef>(null);
 
   const onChangeData = (patch: any) => {
@@ -86,7 +85,6 @@ const SettingVergeBasic = ({ onError }: Props) => {
       <HotkeyViewer ref={hotkeyRef} />
       <MiscViewer ref={miscRef} />
       <LayoutViewer ref={layoutRef} />
-      <UpdateViewer ref={updateRef} />
       <BackupViewer ref={backupRef} />
 
       <SettingItem label={t("Language")}>
