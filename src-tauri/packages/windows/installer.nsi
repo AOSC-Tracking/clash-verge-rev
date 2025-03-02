@@ -444,35 +444,35 @@ FunctionEnd
     !endif
   ${EndIf}
 
-  ; Check if verge-mihomo-alpha.exe is running
+  ; Check if mihomo-alpha.exe is running
   !if "${INSTALLMODE}" == "currentUser"
-    nsis_tauri_utils::FindProcessCurrentUser "verge-mihomo-alpha.exe"
+    nsis_tauri_utils::FindProcessCurrentUser "mihomo-alpha.exe"
   !else
-    nsis_tauri_utils::FindProcess "verge-mihomo-alpha.exe"
+    nsis_tauri_utils::FindProcess "mihomo-alpha.exe"
   !endif
   Pop $R0
   ${If} $R0 = 0
-    DetailPrint "Kill verge-mihomo-alpha.exe..."
+    DetailPrint "Kill mihomo-alpha.exe..."
     !if "${INSTALLMODE}" == "currentUser"
-      nsis_tauri_utils::KillProcessCurrentUser "verge-mihomo-alpha.exe"
+      nsis_tauri_utils::KillProcessCurrentUser "mihomo-alpha.exe"
     !else
-      nsis_tauri_utils::KillProcess "verge-mihomo-alpha.exe"
+      nsis_tauri_utils::KillProcess "mihomo-alpha.exe"
     !endif
   ${EndIf}
 
-  ; Check if verge-mihomo.exe is running
+  ; Check if mihomo.exe is running
   !if "${INSTALLMODE}" == "currentUser"
-    nsis_tauri_utils::FindProcessCurrentUser "verge-mihomo.exe"
+    nsis_tauri_utils::FindProcessCurrentUser "mihomo.exe"
   !else
-    nsis_tauri_utils::FindProcess "verge-mihomo.exe"
+    nsis_tauri_utils::FindProcess "mihomo.exe"
   !endif
   Pop $R0
   ${If} $R0 = 0
-    DetailPrint "Kill verge-mihomo.exe..."
+    DetailPrint "Kill mihomo.exe..."
     !if "${INSTALLMODE}" == "currentUser"
-      nsis_tauri_utils::KillProcessCurrentUser "verge-mihomo.exe"
+      nsis_tauri_utils::KillProcessCurrentUser "mihomo.exe"
     !else
-      nsis_tauri_utils::KillProcess "verge-mihomo.exe"
+      nsis_tauri_utils::KillProcess "mihomo.exe"
     !endif
   ${EndIf}
 
