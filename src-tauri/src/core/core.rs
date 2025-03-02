@@ -260,7 +260,7 @@ impl CoreManager {
         // 使用子进程运行clash验证配置
         let output = app_handle
             .shell()
-            .sidecar(clash_core)?
+            .command(clash_core)
             .args(["-t", "-d", app_dir_str, "-f", config_path])
             .output()
             .await?;
@@ -456,7 +456,7 @@ impl CoreManager {
 
         let (mut rx, child) = app_handle
             .shell()
-            .sidecar(&clash_core)?
+            .command(&clash_core)
             .args([
                 "-d",
                 dirs::path_to_str(&config_dir)?,
