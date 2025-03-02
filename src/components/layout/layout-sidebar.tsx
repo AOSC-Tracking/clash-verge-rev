@@ -14,7 +14,6 @@ import { SortableItem } from '../base'
 
 import { LayoutItem } from './layout-item'
 import { LayoutTraffic } from './layout-traffic'
-import { UpdateButton } from './update-button'
 
 type MenuContextPosition = { top: number; left: number }
 
@@ -141,7 +140,6 @@ export const LayoutSidebar = (props: LayoutSidebarProps) => {
           />
           <LogoSvg fill={isDark ? 'white' : 'black'} />
         </div>
-        <UpdateButton className="the-newbtn" />
       </div>
 
       {/* Edit navigation menu badge */}
