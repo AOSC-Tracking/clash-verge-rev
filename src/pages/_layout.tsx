@@ -353,7 +353,6 @@ const Layout = () => {
                   />
                   <LogoSvg fill={isDark ? "white" : "black"} />
                 </div>
-                <UpdateButton className="the-newbtn" />
               </div>
 
               {menuUnlocked && (
