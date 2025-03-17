@@ -207,79 +207,14 @@ pub async fn save_profile_file(index: String, file_data: Option<String>) -> CmdR
     
     // 对于 merge 文件，只进行语法验证，不进行后续内核验证
     if is_merge_file {
-        println!("[cmd配置save] 检测到merge文件，只进行语法验证");
-        match CoreManager::global().validate_config_file(&file_path_str, Some(true)).await {
-            Ok((true, _)) => {
-                println!("[cmd配置save] merge文件语法验证通过");
-                // 成功后尝试更新整体配置
-                if let Err(e) = CoreManager::global().update_config().await {
-                    println!("[cmd配置save] 更新整体配置时发生错误: {}", e);
-                    log::warn!(target: "app", "更新整体配置时发生错误: {}", e);
-                }
-                return Ok(());
-            }
-            Ok((false, error_msg)) => {
-                println!("[cmd配置save] merge文件语法验证失败: {}", error_msg);
-                // 恢复原始配置文件
-                wrap_err!(fs::write(&file_path, original_content))?;
-                // 发送合并文件专用错误通知
-                let result = (false, error_msg.clone());
-                handle_yaml_validation_notice(&result, "合并配置文件");
-                return Ok(());
-            }
-            Err(e) => {
-                println!("[cmd配置save] 验证过程发生错误: {}", e);
-                // 恢复原始配置文件
-                wrap_err!(fs::write(&file_path, original_content))?;
-                return Err(e.to_string());
-            }
+        // 成功后尝试更新整体配置
+        if let Err(e) = CoreManager::global().update_config().await {
+            println!("[cmd配置save] 更新整体配置时发生错误: {}", e);
+            log::warn!(target: "app", "更新整体配置时发生错误: {}", e);
         }
     }
-    
-    // 非merge文件使用完整验证流程
-    match CoreManager::global().validate_config_file(&file_path_str, None).await {
-        Ok((true, _)) => {
-            println!("[cmd配置save] 验证成功");
-            Ok(())
-        }
-        Ok((false, error_msg)) => {
-            println!("[cmd配置save] 验证失败: {}", error_msg);
-            // 恢复原始配置文件
-            wrap_err!(fs::write(&file_path, original_content))?;
-            
-            // 智能判断错误类型
-            let is_script_error = file_path_str.ends_with(".js") || 
-                               error_msg.contains("Script syntax error") || 
-                               error_msg.contains("Script must contain a main function") ||
-                               error_msg.contains("Failed to read script file");
-            
-            if error_msg.contains("YAML syntax error") || 
-               error_msg.contains("Failed to read file:") ||
-               (!file_path_str.ends_with(".js") && !is_script_error) {
-                // 普通YAML错误使用YAML通知处理
-                println!("[cmd配置save] YAML配置文件验证失败，发送通知");
-                let result = (false, error_msg.clone());
-                handle_yaml_validation_notice(&result, "YAML配置文件");
-            } else if is_script_error {
-                // 脚本错误使用专门的通知处理
-                println!("[cmd配置save] 脚本文件验证失败，发送通知");
-                let result = (false, error_msg.clone());
-                handle_script_validation_notice(&result, "脚本文件");
-            } else {
-                // 普通配置错误使用一般通知
-                println!("[cmd配置save] 其他类型验证失败，发送一般通知");
-                handle::Handle::notice_message("config_validate::error", &error_msg);
-            }
-            
-            Ok(())
-        }
-        Err(e) => {
-            println!("[cmd配置save] 验证过程发生错误: {}", e);
-            // 恢复原始配置文件
-            wrap_err!(fs::write(&file_path, original_content))?;
-            Err(e.to_string())
-        }
-    }
+
+    Ok(())
 }
 
 #[tauri::command]
@@ -646,53 +581,5 @@ pub async fn validate_script_file(file_path: String) -> CmdResult<bool> {
             handle::Handle::notice_message("config_validate::process_terminated", &error_msg);
             Ok(false)
         }
-    }
-}
-
-/// 处理YAML验证相关的所有消息通知
-/// 统一通知接口，保持消息类型一致性
-pub fn handle_yaml_validation_notice(result: &(bool, String), file_type: &str) {
-    if !result.0 {
-        let error_msg = &result.1;
-        println!("[通知] 处理{}验证错误: {}", file_type, error_msg);
-        
-        // 检查是否为merge文件
-        let is_merge_file = file_type.contains("合并");
-        
-        // 根据错误消息内容判断错误类型
-        let status = if error_msg.starts_with("File not found:") {
-            "config_validate::file_not_found"
-        } else if error_msg.starts_with("Failed to read file:") {
-            "config_validate::yaml_read_error"
-        } else if error_msg.starts_with("YAML syntax error:") {
-            if is_merge_file {
-                "config_validate::merge_syntax_error"
-            } else {
-                "config_validate::yaml_syntax_error"
-            }
-        } else if error_msg.contains("mapping values are not allowed") {
-            if is_merge_file {
-                "config_validate::merge_mapping_error"
-            } else {
-                "config_validate::yaml_mapping_error"
-            }
-        } else if error_msg.contains("did not find expected key") {
-            if is_merge_file {
-                "config_validate::merge_key_error"
-            } else {
-                "config_validate::yaml_key_error"
-            }
-        } else {
-            // 如果是其他类型错误，根据文件类型作为一般错误处理
-            if is_merge_file {
-                "config_validate::merge_error"
-            } else {
-                "config_validate::yaml_error"
-            }
-        };
-        
-        log::warn!(target: "app", "{} 验证失败: {}", file_type, error_msg);
-        println!("[通知] 发送通知: status={}, msg={}", status, error_msg);
-        handle::Handle::notice_message(status, error_msg);
     }
 }

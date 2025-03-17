@@ -3,14 +3,13 @@ use crate::core::{clash_api, handle, service};
 #[cfg(target_os = "macos")]
 use crate::core::tray::Tray;
 use crate::log_err;
-use crate::utils::{dirs, help};
+use crate::utils::dirs;
 use anyhow::{bail, Result};
 use once_cell::sync::OnceCell;
 use serde_yaml::Mapping;
-use std::{sync::Arc, time::Duration};
+use std::sync::Arc;
 use tauri_plugin_shell::ShellExt;
 use tokio::sync::Mutex;
-use tokio::time::sleep;
 
 #[derive(Debug)]
 pub struct CoreManager {
@@ -91,23 +90,6 @@ impl CoreManager {
         Ok(())
     }
 
-    /// 使用默认配置
-    pub async fn use_default_config(&self, msg_type: &str, msg_content: &str) -> Result<()> {
-        let runtime_path = dirs::app_home_dir()?.join(RUNTIME_CONFIG);
-        *Config::runtime().draft() = IRuntime {
-            config: Some(Config::clash().latest().0.clone()),
-            exists_keys: vec![],
-            chain_logs: Default::default(),
-        };
-        help::save_yaml(
-            &runtime_path,
-            &Config::clash().latest().0,
-            Some("# Clash Verge Runtime"),
-        )?;
-        handle::Handle::notice_message(msg_type, msg_content);
-        Ok(())
-    }
-
     /// 切换核心
     pub async fn change_core(&self, clash_core: Option<String>) -> Result<()> {
         let clash_core = clash_core.ok_or(anyhow::anyhow!("clash core is null"))?;
@@ -124,49 +106,19 @@ impl CoreManager {
         
         // 2. 使用新内核验证配置
         println!("[切换内核] 使用新内核验证配置");
-        match self.validate_config().await {
-            Ok((true, _)) => {
-                println!("[切换内核] 配置验证通过，开始切换内核");
-                // 3. 验证通过后，应用内核配置并重启
-                Config::verge().apply();
-                log_err!(Config::verge().latest().save_file());
-                
-                match self.restart_core().await {
-                    Ok(_) => {
-                        println!("[切换内核] 内核切换成功");
-                        Config::runtime().apply();
-                        Ok(())
-                    }
-                    Err(err) => {
-                        println!("[切换内核] 内核切换失败: {}", err);
-                        Config::verge().discard();
-                        Config::runtime().discard();
-                        Err(err)
-                    }
-                }
-            }
-            Ok((false, error_msg)) => {
-                println!("[切换内核] 配置验证失败: {}", error_msg);
-                // 使用默认配置并继续切换内核
-                self.use_default_config("config_validate::core_change", &error_msg).await?;
-                Config::verge().apply();
-                log_err!(Config::verge().latest().save_file());
-                
-                match self.restart_core().await {
-                    Ok(_) => {
-                        println!("[切换内核] 内核切换成功（使用默认配置）");
-                        Ok(())
-                    }
-                    Err(err) => {
-                        println!("[切换内核] 内核切换失败: {}", err);
-                        Config::verge().discard();
-                        Err(err)
-                    }
-                }
+        Config::verge().apply();
+        log_err!(Config::verge().latest().save_file());
+        
+        match self.restart_core().await {
+            Ok(_) => {
+                println!("[切换内核] 内核切换成功");
+                Config::runtime().apply();
+                Ok(())
             }
             Err(err) => {
-                println!("[切换内核] 验证过程发生错误: {}", err);
+                println!("[切换内核] 内核切换失败: {}", err);
                 Config::verge().discard();
+                Config::runtime().discard();
                 Err(err)
             }
         }
@@ -230,52 +182,6 @@ impl CoreManager {
             println!("[core配置验证] -------- 验证结束 --------\n");
             Ok((true, String::new()))
         }
-    }
-
-    /// 验证运行时配置
-    pub async fn validate_config(&self) -> Result<(bool, String)> {
-        let config_path = Config::generate_file(ConfigType::Check)?;
-        let config_path = dirs::path_to_str(&config_path)?;
-        self.validate_config_internal(config_path).await
-    }
-
-    /// 验证指定的配置文件
-    pub async fn validate_config_file(&self, config_path: &str, is_merge_file: Option<bool>) -> Result<(bool, String)> {
-        // 检查文件是否存在
-        if !std::path::Path::new(config_path).exists() {
-            let error_msg = format!("File not found: {}", config_path);
-            //handle::Handle::notice_message("config_validate::file_not_found", &error_msg);
-            return Ok((false, error_msg));
-        }
-        
-        // 如果是合并文件且不是强制验证，执行语法检查但不进行完整验证
-        if is_merge_file.unwrap_or(false) {
-            println!("[core配置验证] 检测到Merge文件，仅进行语法检查: {}", config_path);
-            return self.validate_file_syntax(config_path).await;
-        }
-        
-        // 检查是否为脚本文件
-        let is_script = if config_path.ends_with(".js") {
-            true
-        } else {
-            match self.is_script_file(config_path) {
-                Ok(result) => result,
-                Err(err) => {
-                    // 如果无法确定文件类型，尝试使用Clash内核验证
-                    log::warn!(target: "app", "无法确定文件类型: {}, 错误: {}", config_path, err);
-                    return self.validate_config_internal(config_path).await;
-                }
-            }
-        };
-        
-        if is_script {
-            log::info!(target: "app", "检测到脚本文件，使用JavaScript验证: {}", config_path);
-            return self.validate_script_file(config_path).await;
-        }
-        
-        // 对YAML配置文件使用Clash内核验证
-        log::info!(target: "app", "使用Clash内核验证配置文件: {}", config_path);
-        self.validate_config_internal(config_path).await
     }
 
     /// 检查文件是否为脚本文件
@@ -388,6 +294,46 @@ impl CoreManager {
         }
     }
 
+    /// 验证指定的配置文件
+    pub async fn validate_config_file(&self, config_path: &str, is_merge_file: Option<bool>) -> Result<(bool, String)> {
+        // 检查文件是否存在
+        if !std::path::Path::new(config_path).exists() {
+            let error_msg = format!("File not found: {}", config_path);
+            //handle::Handle::notice_message("config_validate::file_not_found", &error_msg);
+            return Ok((false, error_msg));
+        }
+        
+        // 如果是合并文件且不是强制验证，执行语法检查但不进行完整验证
+        if is_merge_file.unwrap_or(false) {
+            println!("[core配置验证] 检测到Merge文件，仅进行语法检查: {}", config_path);
+            return self.validate_file_syntax(config_path).await;
+        }
+        
+        // 检查是否为脚本文件
+        let is_script = if config_path.ends_with(".js") {
+            true
+        } else {
+            match self.is_script_file(config_path) {
+                Ok(result) => result,
+                Err(err) => {
+                    // 如果无法确定文件类型，尝试使用Clash内核验证
+                    log::warn!(target: "app", "无法确定文件类型: {}, 错误: {}", config_path, err);
+                    return self.validate_config_internal(config_path).await;
+                }
+            }
+        };
+        
+        if is_script {
+            log::info!(target: "app", "检测到脚本文件，使用JavaScript验证: {}", config_path);
+            return self.validate_script_file(config_path).await;
+        }
+        
+        // 对YAML配置文件使用Clash内核验证
+        log::info!(target: "app", "使用Clash内核验证配置文件: {}", config_path);
+        self.validate_config_internal(config_path).await
+    }
+    
+
     /// 更新proxies等配置
     pub async fn update_config(&self) -> Result<(bool, String)> {
         println!("[core配置更新] 开始更新配置");
@@ -396,56 +342,15 @@ impl CoreManager {
         println!("[core配置更新] 生成新的配置内容");
         Config::generate().await?;
         
-        // 2. 生成临时文件并进行验证
+        // 2. 生成临时文件
         println!("[core配置更新] 生成临时配置文件用于验证");
         let temp_config = Config::generate_file(ConfigType::Check)?;
         let temp_config = dirs::path_to_str(&temp_config)?;
         println!("[core配置更新] 临时配置文件路径: {}", temp_config);
 
-        // 3. 验证配置
-        match self.validate_config().await {
-            Ok((true, _)) => {
-                println!("[core配置更新] 配置验证通过");
-                // 4. 验证通过后，生成正式的运行时配置
-                println!("[core配置更新] 生成运行时配置");
-                let run_path = Config::generate_file(ConfigType::Run)?;
-                let run_path = dirs::path_to_str(&run_path)?;
+        Config::runtime().apply();
 
-                // 5. 应用新配置
-                println!("[core配置更新] 应用新配置");
-                for i in 0..3 {
-                    match clash_api::put_configs(run_path).await {
-                        Ok(_) => {
-                            println!("[core配置更新] 配置应用成功");
-                            Config::runtime().apply();
-                            return Ok((true, String::new()));
-                        }
-                        Err(err) => {
-                            if i < 2 {
-                                println!("[core配置更新] 第{}次重试应用配置", i + 1);
-                                log::info!(target: "app", "{err}");
-                                sleep(Duration::from_millis(100)).await;
-                            } else {
-                                println!("[core配置更新] 配置应用失败: {}", err);
-                                Config::runtime().discard();
-                                return Ok((false, err.to_string()));
-                            }
-                        }
-                    }
-                }
-                Ok((true, String::new()))
-            }
-            Ok((false, error_msg)) => {
-                println!("[core配置更新] 配置验证失败: {}", error_msg);
-                Config::runtime().discard();
-                Ok((false, error_msg))
-            }
-            Err(e) => {
-                println!("[core配置更新] 验证过程发生错误: {}", e);
-                Config::runtime().discard();
-                Err(e)
-            }
-        }
+        Ok((true, "".to_string()))
     }
 
     /// 只进行文件语法检查，不进行完整验证
