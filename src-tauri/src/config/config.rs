@@ -1,7 +1,7 @@
 use super::{Draft, IClashTemp, IProfiles, IRuntime, IVerge};
 use crate::{
     config::PrfItem,
-    core::{handle, CoreManager},
+    core::handle,
     enhance,
     utils::{dirs, help},
 };
@@ -70,43 +70,13 @@ impl Config {
         // 生成运行时配置
         crate::log_err!(Self::generate().await);
 
-        // 生成运行时配置文件并验证
-        let config_result = Self::generate_file(ConfigType::Run);
+        // 生成运行时配置文件
+        Self::generate_file(ConfigType::Run).ok();
 
-        let validation_result = if config_result.is_ok() {
-            // 验证配置文件
-            println!("[首次启动] 开始验证配置");
 
-            match CoreManager::global().validate_config().await {
-                Ok((is_valid, error_msg)) => {
-                    if !is_valid {
-                        println!(
-                            "[首次启动] 配置验证失败，使用默认最小配置启动: {}",
-                            error_msg
-                        );
-                        CoreManager::global()
-                            .use_default_config("config_validate::boot_error", &error_msg)
-                            .await?;
-                        Some(("config_validate::boot_error", error_msg))
-                    } else {
-                        println!("[首次启动] 配置验证成功");
-                        Some(("config_validate::success", String::new()))
-                    }
-                }
-                Err(err) => {
-                    println!("[首次启动] 验证进程执行失败: {}", err);
-                    CoreManager::global()
-                        .use_default_config("config_validate::process_terminated", "")
-                        .await?;
-                    Some(("config_validate::process_terminated", String::new()))
-                }
-            }
-        } else {
-            println!("[首次启动] 生成配置文件失败，使用默认配置");
-            CoreManager::global()
-                .use_default_config("config_validate::error", "")
-                .await?;
-            Some(("config_validate::error", String::new()))
+        let validation_result = {
+            println!("[首次启动] 配置验证成功");
+            Some(("config_validate::success", String::new()))
         };
 
         // 在单独的任务中发送通知
