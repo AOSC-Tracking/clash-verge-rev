@@ -13,7 +13,7 @@ use log4rs::{
 };
 use std::{
     fs::{self, DirEntry},
-    path::PathBuf,
+    path::{Path, PathBuf},
     str::FromStr,
 };
 use tauri_plugin_shell::ShellExt;
@@ -318,25 +318,20 @@ pub fn init_resources() -> Result<()> {
     // copy the resource file
     // if the source file is newer than the destination file, copy it over
     for file in file_list.iter() {
-        let src_path = res_dir.join(file);
+        let mut src_path = res_dir.join(file);
         let dest_path = app_dir.join(file);
         let test_dest_path = test_dir.join(file);
         log::debug!(target: "app", "src_path: {src_path:?}, dest_path: {dest_path:?}");
 
-        let handle_copy = |dest: &PathBuf| {
-            match fs::copy(&src_path, dest) {
-                Ok(_) => log::debug!(target: "app", "resources copied '{file}'"),
-                Err(err) => {
-                    log::error!(target: "app", "failed to copy resources '{file}' to '{dest:?}', {err}")
-                }
-            };
-        };
+        if src_path.is_symlink() {
+            src_path = src_path.read_link()?;
+        }
 
         if src_path.exists() && !test_dest_path.exists() {
-            handle_copy(&test_dest_path);
+            copy(&src_path, &test_dest_path, &file);
         }
         if src_path.exists() && !dest_path.exists() {
-            handle_copy(&dest_path);
+            copy(&src_path, &dest_path, &file);
             continue;
         }
 
@@ -346,19 +341,28 @@ pub fn init_resources() -> Result<()> {
         match (src_modified, dest_modified) {
             (Ok(src_modified), Ok(dest_modified)) => {
                 if src_modified > dest_modified {
-                    handle_copy(&dest_path);
+                    copy(&src_path, &dest_path, &file);
                 } else {
                     log::debug!(target: "app", "skipping resource copy '{file}'");
                 }
             }
             _ => {
                 log::debug!(target: "app", "failed to get modified '{file}'");
-                handle_copy(&dest_path);
+                copy(&src_path, &dest_path, &file);
             }
         };
     }
 
     Ok(())
+}
+
+fn copy(src_path: &Path, dest: &Path, file: &str) {
+    match fs::copy(src_path, dest) {
+        Ok(_) => log::debug!(target: "app", "resources copied '{file}'"),
+        Err(err) => {
+            log::error!(target: "app", "failed to copy resources '{file}' to '{dest:?}', {err}")
+        }
+    };
 }
 
 /// initialize url scheme
