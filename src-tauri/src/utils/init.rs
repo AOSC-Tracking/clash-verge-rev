@@ -13,7 +13,10 @@ use log4rs::{
     config::{Appender, Logger, Root},
     encode::pattern::PatternEncoder,
 };
-use std::{path::PathBuf, str::FromStr};
+use std::{
+    path::{Path, PathBuf},
+    str::FromStr,
+};
 use tauri_plugin_shell::ShellExt;
 use tokio::fs;
 use tokio::fs::DirEntry;
@@ -403,7 +406,7 @@ pub async fn init_resources() -> Result<()> {
     // copy the resource file
     // if the source file is newer than the destination file, copy it over
     for file in file_list.iter() {
-        let src_path = res_dir.join(file);
+        let mut src_path = res_dir.join(file);
         let dest_path = app_dir.join(file);
         logging!(
             debug,
@@ -414,27 +417,12 @@ pub async fn init_resources() -> Result<()> {
             dest_path
         );
 
-        let handle_copy = |src: PathBuf, dest: PathBuf, file: String| async move {
-            match fs::copy(&src, &dest).await {
-                Ok(_) => {
-                    logging!(debug, Type::Setup, true, "resources copied '{}'", file);
-                }
-                Err(err) => {
-                    logging!(
-                        error,
-                        Type::Setup,
-                        true,
-                        "failed to copy resources '{}' to '{:?}', {}",
-                        file,
-                        dest,
-                        err
-                    );
-                }
-            };
-        };
+        if src_path.is_symlink() {
+            src_path = src_path.read_link()?;
+        }
 
         if src_path.exists() && !dest_path.exists() {
-            handle_copy(src_path.clone(), dest_path.clone(), file.to_string()).await;
+            copy(&src_path, &dest_path, &file).await;
             continue;
         }
 
@@ -444,7 +432,7 @@ pub async fn init_resources() -> Result<()> {
         match (src_modified, dest_modified) {
             (Ok(src_modified), Ok(dest_modified)) => {
                 if src_modified > dest_modified {
-                    handle_copy(src_path.clone(), dest_path.clone(), file.to_string()).await;
+                    copy(&src_path, &dest_path, &file).await;
                 } else {
                     logging!(
                         debug,
@@ -456,19 +444,22 @@ pub async fn init_resources() -> Result<()> {
                 }
             }
             _ => {
-                logging!(
-                    debug,
-                    Type::Setup,
-                    true,
-                    "failed to get modified '{}'",
-                    file
-                );
-                handle_copy(src_path.clone(), dest_path.clone(), file.to_string()).await;
+                log::debug!(target: "app", "failed to get modified '{file}'");
+                copy(&src_path, &dest_path, &file).await;
             }
         };
     }
 
     Ok(())
+}
+
+async fn copy(src_path: &Path, dest: &Path, file: &str) {
+    match fs::copy(src_path, dest).await {
+        Ok(_) => log::debug!(target: "app", "resources copied '{file}'"),
+        Err(err) => {
+            log::error!(target: "app", "failed to copy resources '{file}' to '{dest:?}', {err}")
+        }
+    };
 }
 
 /// initialize url scheme
