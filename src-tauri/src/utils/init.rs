@@ -20,7 +20,7 @@ use flexi_logger::writers::FileLogWriter;
 use flexi_logger::{Cleanup, Criterion, FileSpec};
 #[cfg(not(feature = "tauri-dev"))]
 use flexi_logger::{Duplicate, LogSpecBuilder, Logger};
-use std::{path::PathBuf, str::FromStr};
+use std::{path::{Path, PathBuf}, str::FromStr};
 use tauri_plugin_shell::ShellExt;
 use tokio::fs;
 use tokio::fs::DirEntry;
