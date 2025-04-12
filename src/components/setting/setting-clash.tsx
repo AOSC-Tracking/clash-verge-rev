@@ -17,7 +17,6 @@ import { ClashCoreViewer } from "./mods/clash-core-viewer";
 import { invoke_uwp_tool } from "@/services/cmds";
 import getSystem from "@/utils/get-system";
 import { useVerge } from "@/hooks/use-verge";
-import { updateGeoData } from "@/services/api";
 import { TooltipIcon } from "@/components/base/base-tooltip-icon";
 import { NetworkInterfaceViewer } from "./mods/network-interface-viewer";
 import { DnsViewer } from "./mods/dns-viewer";
@@ -73,14 +72,6 @@ const SettingClash = ({ onError }: Props) => {
   };
   const onChangeVerge = (patch: Partial<IVergeConfig>) => {
     mutateVerge({ ...verge, ...patch }, false);
-  };
-  const onUpdateGeo = async () => {
-    try {
-      await updateGeoData();
-      Notice.success(t("GeoData Updated"));
-    } catch (err: any) {
-      Notice.error(err?.response.data.message || err.toString());
-    }
   };
 
   // 实现DNS设置开关处理函数
@@ -279,7 +270,6 @@ const SettingClash = ({ onError }: Props) => {
         />
       )}
 
-      <SettingItem onClick={onUpdateGeo} label={t("Update GeoData")} />
     </SettingList>
   );
 };
