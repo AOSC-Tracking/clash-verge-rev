@@ -67,14 +67,6 @@ const SettingClash = ({ onError }: Props) => {
   const onChangeVerge = (patch: Partial<IVergeConfig>) => {
     mutateVerge({ ...verge, ...patch }, false);
   };
-  const onUpdateGeo = async () => {
-    try {
-      await updateGeoData();
-      showNotice("success", t("GeoData Updated"));
-    } catch (err: any) {
-      showNotice("error", err?.response.data.message || err.toString());
-    }
-  };
 
   // 实现DNS设置开关处理函数
   const handleDnsToggle = useLockFn(async (enable: boolean) => {
@@ -261,7 +253,6 @@ const SettingClash = ({ onError }: Props) => {
         />
       )}
 
-      <SettingItem onClick={onUpdateGeo} label={t("Update GeoData")} />
     </SettingList>
   );
 };
