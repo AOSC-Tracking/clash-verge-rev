@@ -10,13 +10,6 @@ pub async fn open_app_dir() -> CmdResult<()> {
 }
 
 #[tauri::command]
-pub async fn open_core_dir() -> CmdResult<()> {
-    let core_dir = tauri::utils::platform::current_exe().stringify_err()?;
-    let core_dir = core_dir.parent().ok_or("failed to get core dir")?;
-    open::that(core_dir).stringify_err()
-}
-
-#[tauri::command]
 pub async fn open_logs_dir() -> CmdResult<()> {
     let log_dir = dirs::app_logs_dir().stringify_err()?;
     open::that(log_dir).stringify_err()
