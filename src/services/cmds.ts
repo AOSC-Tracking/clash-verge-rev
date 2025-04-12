@@ -504,12 +504,6 @@ export async function openAppDir() {
   );
 }
 
-export async function openCoreDir() {
-  return invoke<void>("open_core_dir").catch((err) =>
-    showNotice("error", err?.message || err.toString()),
-  );
-}
-
 export async function openLogsDir() {
   return invoke<void>("open_logs_dir").catch((err) =>
     showNotice("error", err?.message || err.toString()),
