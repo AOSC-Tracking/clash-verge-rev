@@ -610,17 +610,7 @@ const resolveMmdb = () =>
   resolveResource({
     file: 'Country.mmdb',
     downloadURL: `https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/country.mmdb`,
-  })
-const resolveGeosite = () =>
-  resolveResource({
-    file: 'geosite.dat',
-    downloadURL: `https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat`,
-  })
-const resolveGeoIP = () =>
-  resolveResource({
-    file: 'geoip.dat',
-    downloadURL: `https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.dat`,
-  })
+  });
 const resolveEnableLoopback = () =>
   resolveResource({
     file: 'enableLoopback.exe',
@@ -644,8 +634,6 @@ const resolveUnSetDnsScript = () =>
 const tasks = [
   { name: 'plugin', func: resolvePlugin, retry: 5, winOnly: true },
   { name: 'mmdb', func: resolveMmdb, retry: 5 },
-  { name: 'geosite', func: resolveGeosite, retry: 5 },
-  { name: 'geoip', func: resolveGeoIP, retry: 5 },
   {
     name: 'enableLoopback',
     func: resolveEnableLoopback,
