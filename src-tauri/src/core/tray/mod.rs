@@ -840,15 +840,6 @@ fn create_tray_menu(
     )
     .unwrap();
 
-    let open_core_dir = &MenuItem::with_id(
-        app_handle,
-        "open_core_dir",
-        t("Core Dir"),
-        true,
-        None::<&str>,
-    )
-    .unwrap();
-
     let open_logs_dir = &MenuItem::with_id(
         app_handle,
         "open_logs_dir",
@@ -863,7 +854,7 @@ fn create_tray_menu(
         "open_dir",
         t("Open Dir"),
         true,
-        &[open_app_dir, open_core_dir, open_logs_dir],
+        &[open_app_dir, open_logs_dir],
     )
     .unwrap();
 
@@ -965,15 +956,8 @@ fn on_menu_event(_: &AppHandle, event: MenuEvent) {
             feat::toggle_tun_mode(None);
         }
         "copy_env" => feat::copy_clash_env(),
-        "open_app_dir" => {
-            let _ = cmd::open_app_dir();
-        }
-        "open_core_dir" => {
-            let _ = cmd::open_core_dir();
-        }
-        "open_logs_dir" => {
-            let _ = cmd::open_logs_dir();
-        }
+        "open_app_dir" => crate::logging_error!(Type::Cmd, true, cmd::open_app_dir()),
+        "open_logs_dir" => crate::logging_error!(Type::Cmd, true, cmd::open_logs_dir()),
         "restart_clash" => feat::restart_clash_core(),
         "restart_app" => feat::restart_app(),
         "entry_lightweight_mode" => {
