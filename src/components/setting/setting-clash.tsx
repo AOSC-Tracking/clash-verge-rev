@@ -65,12 +65,7 @@ const SettingClash = ({ onError }: Props) => {
     mutateClash((old) => ({ ...old!, ...patch }), false);
   };
   const onUpdateGeo = async () => {
-    try {
-      await updateGeo();
-      showNotice("success", t("GeoData Updated"));
-    } catch (err: any) {
-      showNotice("error", err.message || err.toString());
-    }
+    showNotice("error", t("GeoData should be updated with oma"));
   };
 
   // 实现DNS设置开关处理函数
@@ -261,7 +256,6 @@ const SettingClash = ({ onError }: Props) => {
         />
       )}
 
-      <SettingItem onClick={onUpdateGeo} label={t("Update GeoData")} />
     </SettingList>
   );
 };
