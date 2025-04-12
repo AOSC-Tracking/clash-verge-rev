@@ -9,7 +9,6 @@ import {
   exitApp,
   exportDiagnosticInfo,
   openAppDir,
-  openCoreDir,
   openDevTools,
   openLogsDir,
 } from "@/services/cmds";
@@ -88,8 +87,6 @@ const SettingVergeAdvanced = ({ onError: _ }: Props) => {
           />
         }
       />
-
-      <SettingItem onClick={openCoreDir} label={t("Open Core Dir")} />
 
       <SettingItem onClick={openLogsDir} label={t("Open Logs Dir")} />
 
