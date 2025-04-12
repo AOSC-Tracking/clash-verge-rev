@@ -318,10 +318,6 @@ export async function openAppDir() {
   return invoke<void>("open_app_dir").catch((err) => showNotice.error(err));
 }
 
-export async function openCoreDir() {
-  return invoke<void>("open_core_dir").catch((err) => showNotice.error(err));
-}
-
 export async function openLogsDir() {
   return invoke<void>("open_logs_dir").catch((err) => showNotice.error(err));
 }
