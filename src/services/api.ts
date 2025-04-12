@@ -56,12 +56,6 @@ export const getClashConfig = async () => {
   return instance.get("/configs") as Promise<IConfigData>;
 };
 
-/// Update geo data
-export const updateGeoData = async () => {
-  const instance = await getAxios();
-  return instance.post("/configs/geo");
-};
-
 /// Get current rules
 export const getRules = async () => {
   const instance = await getAxios();
