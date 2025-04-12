@@ -45,7 +45,6 @@ define_menu! {
     lightweight_mode => LIGHTWEIGHT_MODE, "tray_lightweight_mode", "tray.lightweightMode",
     copy_env => COPY_ENV, "tray_copy_env", "tray.copyEnv",
     conf_dir => CONF_DIR, "tray_conf_dir", "tray.confDir",
-    core_dir => CORE_DIR, "tray_core_dir", "tray.coreDir",
     logs_dir => LOGS_DIR, "tray_logs_dir", "tray.logsDir",
     open_dir => OPEN_DIR, "tray_open_dir", "tray.openDir",
     app_log => APP_LOG, "tray_app_log", "tray.appLog",

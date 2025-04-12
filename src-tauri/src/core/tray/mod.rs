@@ -893,8 +893,6 @@ async fn create_tray_menu(
 
     let open_app_dir = &MenuItem::with_id(app_handle, MenuIds::CONF_DIR, &texts.conf_dir, true, None::<&str>)?;
 
-    let open_core_dir = &MenuItem::with_id(app_handle, MenuIds::CORE_DIR, &texts.core_dir, true, None::<&str>)?;
-
     let open_logs_dir = &MenuItem::with_id(app_handle, MenuIds::LOGS_DIR, &texts.logs_dir, true, None::<&str>)?;
 
     let open_app_log = &MenuItem::with_id(app_handle, MenuIds::APP_LOG, &texts.app_log, true, None::<&str>)?;
@@ -906,7 +904,7 @@ async fn create_tray_menu(
         MenuIds::OPEN_DIR,
         &texts.open_dir,
         true,
-        &[open_app_dir, open_core_dir, open_logs_dir, open_app_log, open_core_log],
+        &[open_app_dir, open_logs_dir, open_app_log, open_core_log],
     )?;
 
     let restart_clash = &MenuItem::with_id(
@@ -1007,9 +1005,6 @@ fn on_menu_event(_: &AppHandle, event: MenuEvent) {
             MenuIds::CONF_DIR => {
                 println!("Open directory submenu clicked");
                 let _ = cmd::open_app_dir().await;
-            }
-            MenuIds::CORE_DIR => {
-                let _ = cmd::open_core_dir().await;
             }
             MenuIds::LOGS_DIR => {
                 let _ = cmd::open_logs_dir().await;

@@ -9,7 +9,6 @@ import {
   exitApp,
   exportDiagnosticInfo,
   openAppDir,
-  openCoreDir,
   openDevTools,
   openLogsDir,
 } from "@/services/cmds";
@@ -94,11 +93,6 @@ const SettingVergeAdvanced = ({ onError: _ }: Props) => {
             sx={{ opacity: "0.7" }}
           />
         }
-      />
-
-      <SettingItem
-        onClick={openCoreDir}
-        label={t("settings.components.verge.advanced.fields.openCoreDir")}
       />
 
       <SettingItem onClick={openLogsDir} label={t("settings.components.verge.advanced.fields.openLogsDir")} />
