@@ -135,7 +135,6 @@ mod app_init {
             cmd::get_embedded_server_port,
             cmd::open_app_dir,
             cmd::open_logs_dir,
-            cmd::open_core_dir,
             cmd::get_network_interfaces,
             cmd::get_system_hostname,
             cmd::restart_app,
