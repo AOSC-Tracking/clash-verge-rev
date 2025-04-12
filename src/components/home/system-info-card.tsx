@@ -64,36 +64,6 @@ export const SystemInfoCard = () => {
         }
       })
       .catch(console.error);
-
-    // 获取最后检查更新时间
-    const lastCheck = localStorage.getItem("last_check_update");
-    if (lastCheck) {
-      try {
-        const timestamp = parseInt(lastCheck, 10);
-        if (!isNaN(timestamp)) {
-          setSystemState((prev) => ({
-            ...prev,
-            lastCheckUpdate: new Date(timestamp).toLocaleString(),
-          }));
-        }
-      } catch (e) {
-        console.error("Error parsing last check update time", e);
-      }
-    } else if (verge?.auto_check_update) {
-      // 如果启用了自动检查更新但没有记录，设置当前时间并延迟检查
-      const now = Date.now();
-      localStorage.setItem("last_check_update", now.toString());
-      setSystemState((prev) => ({
-        ...prev,
-        lastCheckUpdate: new Date(now).toLocaleString(),
-      }));
-
-      setTimeout(() => {
-        if (verge?.auto_check_update) {
-          checkUpdate().catch(console.error);
-        }
-      }, 5000);
-    }
   }, [verge?.auto_check_update]);
 
   // 自动检查更新逻辑
@@ -135,22 +105,7 @@ export const SystemInfoCard = () => {
     if (isSidecarMode || (isAdminMode && isSidecarMode)) {
       installServiceAndRestartCore();
     }
-  }, [isSidecarMode, isAdminMode, installServiceAndRestartCore]);
-
-  // 检查更新
-  const onCheckUpdate = useLockFn(async () => {
-    try {
-      const info = await checkUpdate();
-      if (!info?.available) {
-        showNotice("success", t("Currently on the Latest Version"));
-      } else {
-        showNotice("info", t("Update Available"), 2000);
-        goToSettings();
-      }
-    } catch (err: any) {
-      showNotice("error", err.message || err.toString());
-    }
-  });
+  }, [isSidecarMode, isAdminMode, , installServiceAndRestartCore]);
 
   // 是否启用自启动
   const autoLaunchEnabled = useMemo(
@@ -299,24 +254,6 @@ export const SystemInfoCard = () => {
           >
             {getModeIcon()}
             {getModeText()}
-          </Typography>
-        </Stack>
-        <Divider />
-        <Stack direction="row" justifyContent="space-between">
-          <Typography variant="body2" color="text.secondary">
-            {t("Last Check Update")}
-          </Typography>
-          <Typography
-            variant="body2"
-            fontWeight="medium"
-            onClick={onCheckUpdate}
-            sx={{
-              cursor: "pointer",
-              textDecoration: "underline",
-              "&:hover": { opacity: 0.7 },
-            }}
-          >
-            {systemState.lastCheckUpdate}
           </Typography>
         </Stack>
         <Divider />
