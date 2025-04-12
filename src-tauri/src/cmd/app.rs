@@ -13,14 +13,6 @@ pub async fn open_app_dir() -> CmdResult<()> {
     wrap_err!(open::that(app_dir))
 }
 
-/// 打开核心所在目录
-#[tauri::command]
-pub async fn open_core_dir() -> CmdResult<()> {
-    let core_dir = wrap_err!(tauri::utils::platform::current_exe())?;
-    let core_dir = core_dir.parent().ok_or("failed to get core dir")?;
-    wrap_err!(open::that(core_dir))
-}
-
 /// 打开日志目录
 #[tauri::command]
 pub async fn open_logs_dir() -> CmdResult<()> {

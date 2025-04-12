@@ -617,7 +617,6 @@ async fn create_tray_menu(
     let lightweight_mode_text = t("LightWeight Mode").await;
     let copy_env_text = t("Copy Env").await;
     let conf_dir_text = t("Conf Dir").await;
-    let core_dir_text = t("Core Dir").await;
     let logs_dir_text = t("Logs Dir").await;
     let open_dir_text = t("Open Dir").await;
     let restart_clash_text = t("Restart Clash Core").await;
@@ -712,14 +711,6 @@ async fn create_tray_menu(
         None::<&str>,
     )?;
 
-    let open_core_dir = &MenuItem::with_id(
-        app_handle,
-        "open_core_dir",
-        core_dir_text,
-        true,
-        None::<&str>,
-    )?;
-
     let open_logs_dir = &MenuItem::with_id(
         app_handle,
         "open_logs_dir",
@@ -733,7 +724,7 @@ async fn create_tray_menu(
         "open_dir",
         open_dir_text,
         true,
-        &[open_app_dir, open_core_dir, open_logs_dir],
+        &[open_app_dir, open_logs_dir],
     )?;
 
     let restart_clash = &MenuItem::with_id(
@@ -818,35 +809,28 @@ fn on_menu_event(_: &AppHandle, event: MenuEvent) {
                     return;
                 }
 
-                if crate::module::lightweight::is_in_lightweight_mode() {
-                    log::info!(target: "app", "当前在轻量模式，正在退出");
-                    crate::module::lightweight::exit_lightweight_mode().await; // Await async function
-                }
-                let result = WindowManager::show_main_window().await; // Await async function
-                log::info!(target: "app", "窗口显示结果: {result:?}");
+            if crate::module::lightweight::is_in_lightweight_mode() {
+                log::info!(target: "app", "当前在轻量模式，正在退出");
+                crate::module::lightweight::exit_lightweight_mode();
             }
-            "system_proxy" => {
-                feat::toggle_system_proxy().await; // Await async function
+            let result = WindowManager::show_main_window().await;
+            log::info!(target: "app", "窗口显示结果: {result:?}");
+        }
+        "system_proxy" => {
+            feat::toggle_system_proxy();
+        }
+        "tun_mode" => {
+            feat::toggle_tun_mode(None);
+        }
+        "copy_env" => feat::copy_clash_env().await,
+        "open_app_dir" => crate::logging_error!(Type::Cmd, true, cmd::open_app_dir().await),
+        "open_logs_dir" => crate::logging_error!(Type::Cmd, true, cmd::open_logs_dir().await),
+        "restart_clash" => feat::restart_clash_core().await,
+        "restart_app" => feat::restart_app().await,
+        "entry_lightweight_mode" => {
+            if !should_handle_tray_click() {
+                return;
             }
-            "tun_mode" => {
-                feat::toggle_tun_mode(None).await; // Await async function
-            }
-            "copy_env" => feat::copy_clash_env().await, // Await async function
-            "open_app_dir" => {
-                let _ = cmd::open_app_dir().await; // Await async function
-            }
-            "open_core_dir" => {
-                let _ = cmd::open_core_dir().await; // Await async function
-            }
-            "open_logs_dir" => {
-                let _ = cmd::open_logs_dir().await; // Await async function
-            }
-            "restart_clash" => feat::restart_clash_core().await, // Await async function
-            "restart_app" => feat::restart_app().await,          // Await async function
-            "entry_lightweight_mode" => {
-                if !should_handle_tray_click() {
-                    return;
-                }
 
                 let was_lightweight = crate::module::lightweight::is_in_lightweight_mode();
                 if was_lightweight {

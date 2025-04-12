@@ -4,7 +4,6 @@ import { Typography } from "@mui/material";
 import {
   exitApp,
   openAppDir,
-  openCoreDir,
   openLogsDir,
   openDevTools,
   exportDiagnosticInfo,
@@ -86,8 +85,6 @@ const SettingVergeAdvanced = ({ onError: _ }: Props) => {
           />
         }
       />
-
-      <SettingItem onClick={openCoreDir} label={t("Open Core Dir")} />
 
       <SettingItem onClick={openLogsDir} label={t("Open Logs Dir")} />
 
