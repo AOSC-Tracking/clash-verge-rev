@@ -3,7 +3,6 @@ import { TooltipIcon } from "@/components/base/base-tooltip-icon";
 import { useClash } from "@/hooks/use-clash";
 import { useListen } from "@/hooks/use-listen";
 import { useVerge } from "@/hooks/use-verge";
-import { updateGeoData } from "@/services/api";
 import { invoke_uwp_tool } from "@/services/cmds";
 import { showNotice } from "@/services/noticeService";
 import getSystem from "@/utils/get-system";
@@ -64,14 +63,6 @@ const SettingClash = ({ onError }: Props) => {
   };
   const onChangeVerge = (patch: Partial<IVergeConfig>) => {
     mutateVerge({ ...verge, ...patch }, false);
-  };
-  const onUpdateGeo = async () => {
-    try {
-      await updateGeoData();
-      showNotice("success", t("GeoData Updated"));
-    } catch (err: any) {
-      showNotice("error", err?.response.data.message || err.toString());
-    }
   };
 
   // 实现DNS设置开关处理函数
@@ -256,7 +247,6 @@ const SettingClash = ({ onError }: Props) => {
         />
       )}
 
-      <SettingItem onClick={onUpdateGeo} label={t("Update GeoData")} />
     </SettingList>
   );
 };
