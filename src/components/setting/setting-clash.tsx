@@ -63,13 +63,8 @@ const SettingClash = ({ onError }: Props) => {
     mutateClash((old) => ({ ...old!, ...patch }), false)
   }
   const onUpdateGeo = async () => {
-    try {
-      await updateGeo()
-      showNotice.success('settings.feedback.notifications.clash.geoDataUpdated')
-    } catch (err: any) {
-      showNotice.error(err)
-    }
-  }
+    showNotice.error('GeoData should be updated with oma');
+  };
 
   const handleDnsToggle = useLockFn(
     async (enable: boolean, confirmation?: string) => {
@@ -301,11 +296,6 @@ const SettingClash = ({ onError }: Props) => {
           }
         />
       )}
-
-      <SettingItem
-        onClick={onUpdateGeo}
-        label={t('settings.sections.clash.form.fields.updateGeoData')}
-      />
 
       <SettingItem
         label={t('settings.sections.clash.form.fields.tunnels.title')}
