@@ -7,7 +7,6 @@ use anyhow::{bail, Context, Result};
 use serde::{Deserialize, Serialize};
 use std::{
     collections::HashMap,
-    env::current_exe,
     path::PathBuf,
     process::Command as StdCommand,
     time::{SystemTime, UNIX_EPOCH},
@@ -94,9 +93,7 @@ impl ServiceState {
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct ResponseBody {
     pub core_type: Option<String>,
-    pub bin_path: String,
     pub config_dir: String,
-    pub log_file: String,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -576,26 +573,14 @@ pub(super) async fn start_with_existing_service(config_file: &PathBuf) -> Result
 
     let clash_core = { Config::verge().latest().clash_core.clone() };
     let clash_core = clash_core.unwrap_or("mihomo".into());
-
-    let bin_ext = if cfg!(windows) { ".exe" } else { "" };
-    let clash_bin = format!("{clash_core}{bin_ext}");
-    let bin_path = current_exe()?.with_file_name(clash_bin);
-    let bin_path = dirs::path_to_str(&bin_path)?;
-
     let config_dir = dirs::app_home_dir()?;
     let config_dir = dirs::path_to_str(&config_dir)?;
-
-    let log_path = dirs::service_log_file()?;
-    let log_path = dirs::path_to_str(&log_path)?;
-
     let config_file = dirs::path_to_str(config_file)?;
 
     let mut map = HashMap::new();
     map.insert("core_type", clash_core.as_str());
-    map.insert("bin_path", bin_path);
     map.insert("config_dir", config_dir);
     map.insert("config_file", config_file);
-    map.insert("log_file", log_path);
 
     log::info!(target:"app", "start service: {:?}", map.clone());
 
