@@ -39,7 +39,6 @@ const SettingVergeAdvanced = ({ onError }: Props) => {
   const backupRef = useRef<DialogRef>(null);
   const liteModeRef = useRef<DialogRef>(null);
 
-
   const onExportDiagnosticInfo = useCallback(async () => {
     await exportDiagnosticInfo();
     showNotice("success", t("Copy Success"), 1000);

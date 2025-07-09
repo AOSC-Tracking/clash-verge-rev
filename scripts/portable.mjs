@@ -35,7 +35,6 @@ async function resolvePortable() {
   }
   const zip = new AdmZip();
 
-
   zip.addLocalFile(path.join(releaseDir, "Clash Verge.exe"));
   zip.addLocalFile(path.join(releaseDir, "mihomo.exe"));
   zip.addLocalFile(path.join(releaseDir, "mihomo-alpha.exe"));

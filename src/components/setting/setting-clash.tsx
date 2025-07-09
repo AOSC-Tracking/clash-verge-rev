@@ -246,7 +246,6 @@ const SettingClash = ({ onError }: Props) => {
           }
         />
       )}
-
     </SettingList>
   );
 };
