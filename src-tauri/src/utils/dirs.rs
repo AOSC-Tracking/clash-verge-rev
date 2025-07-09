@@ -187,20 +187,6 @@ pub fn service_path() -> Result<PathBuf> {
     Ok(res_dir.join("clash-verge-service.exe"))
 }
 
-pub fn service_log_file() -> Result<PathBuf> {
-    use chrono::Local;
-
-    let log_dir = app_logs_dir()?.join("service");
-
-    let local_time = Local::now().format("%Y-%m-%d-%H%M").to_string();
-    let log_file = format!("{}.log", local_time);
-    let log_file = log_dir.join(log_file);
-
-    let _ = std::fs::create_dir_all(&log_dir);
-
-    Ok(log_file)
-}
-
 pub fn path_to_str(path: &PathBuf) -> Result<&str> {
     let path_str = path
         .as_os_str()
