@@ -148,122 +148,6 @@ async function getLatestReleaseVersion() {
   }
 }
 
-/**
- * core info
- */
-function clashMetaAlpha() {
-  const name = META_ALPHA_MAP[`${platform}-${arch}`];
-  const isWin = platform === "win32";
-  const urlExt = isWin ? "zip" : "gz";
-  const downloadURL = `${META_ALPHA_URL_PREFIX}/${name}-${META_ALPHA_VERSION}.${urlExt}`;
-  const exeFile = `${name}${isWin ? ".exe" : ""}`;
-  const zipFile = `${name}-${META_ALPHA_VERSION}.${urlExt}`;
-
-  return {
-    name: "mihomo-alpha",
-    targetFile: `mihomo-alpha-${SIDECAR_HOST}${isWin ? ".exe" : ""}`,
-    exeFile,
-    zipFile,
-    downloadURL,
-  };
-}
-
-function clashMeta() {
-  const name = META_MAP[`${platform}-${arch}`];
-  const isWin = platform === "win32";
-  const urlExt = isWin ? "zip" : "gz";
-  const downloadURL = `${META_URL_PREFIX}/${META_VERSION}/${name}-${META_VERSION}.${urlExt}`;
-  const exeFile = `${name}${isWin ? ".exe" : ""}`;
-  const zipFile = `${name}-${META_VERSION}.${urlExt}`;
-
-  return {
-    name: "mihomo",
-    targetFile: `mihomo-${SIDECAR_HOST}${isWin ? ".exe" : ""}`,
-    exeFile,
-    zipFile,
-    downloadURL,
-  };
-}
-/**
- * download sidecar and rename
- */
-async function resolveSidecar(binInfo) {
-  const { name, targetFile, zipFile, exeFile, downloadURL } = binInfo;
-
-  const sidecarDir = path.join(cwd, "src-tauri", "sidecar");
-  const sidecarPath = path.join(sidecarDir, targetFile);
-
-  await fsp.mkdir(sidecarDir, { recursive: true });
-  if (!FORCE && fs.existsSync(sidecarPath)) return;
-
-  const tempDir = path.join(TEMP_DIR, name);
-  const tempZip = path.join(tempDir, zipFile);
-  const tempExe = path.join(tempDir, exeFile);
-
-  await fsp.mkdir(tempDir, { recursive: true });
-  try {
-    if (!fs.existsSync(tempZip)) {
-      await downloadFile(downloadURL, tempZip);
-    }
-
-    if (zipFile.endsWith(".zip")) {
-      const zip = new AdmZip(tempZip);
-      zip.getEntries().forEach((entry) => {
-        log_debug(`"${name}" entry name`, entry.entryName);
-      });
-      zip.extractAllTo(tempDir, true);
-      await fsp.rename(tempExe, sidecarPath);
-      log_success(`unzip finished: "${name}"`);
-    } else if (zipFile.endsWith(".tgz")) {
-      // tgz
-      await fsp.mkdir(tempDir, { recursive: true });
-      await extract({
-        cwd: tempDir,
-        file: tempZip,
-        //strip: 1, // 可能需要根据实际的 .tgz 文件结构调整
-      });
-      const files = await fsp.readdir(tempDir);
-      log_debug(`"${name}" files in tempDir:`, files);
-      const extractedFile = files.find((file) => file.startsWith("虚空终端-"));
-      if (extractedFile) {
-        const extractedFilePath = path.join(tempDir, extractedFile);
-        await fsp.rename(extractedFilePath, sidecarPath);
-        log_success(`"${name}" file renamed to "${sidecarPath}"`);
-        execSync(`chmod 755 ${sidecarPath}`);
-        log_success(`chmod binary finished: "${name}"`);
-      } else {
-        throw new Error(`Expected file not found in ${tempDir}`);
-      }
-    } else {
-      // gz
-      const readStream = fs.createReadStream(tempZip);
-      const writeStream = fs.createWriteStream(sidecarPath);
-      await new Promise((resolve, reject) => {
-        const onError = (error) => {
-          log_error(`"${name}" gz failed:`, error.message);
-          reject(error);
-        };
-        readStream
-          .pipe(zlib.createGunzip().on("error", onError))
-          .pipe(writeStream)
-          .on("finish", () => {
-            execSync(`chmod 755 ${sidecarPath}`);
-            log_success(`chmod binary finished: "${name}"`);
-            resolve();
-          })
-          .on("error", onError);
-      });
-    }
-  } catch (err) {
-    // 需要删除文件
-    await fsp.rm(sidecarPath, { recursive: true, force: true });
-    throw err;
-  } finally {
-    // delete temp dir
-    await fsp.rm(tempDir, { recursive: true, force: true });
-  }
-}
-
 const resolveSetDnsScript = () =>
   resolveResource({
     file: "set_dns.sh",
@@ -416,14 +300,6 @@ async function resolveLocales() {
  */
 const SERVICE_URL = `https://github.com/clash-verge-rev/clash-verge-service/releases/download/${SIDECAR_HOST}`;
 
-const resolveService = () => {
-  let ext = platform === "win32" ? ".exe" : "";
-  let suffix = platform === "linux" ? "-" + SIDECAR_HOST : "";
-  resolveResource({
-    file: "clash-verge-service" + suffix + ext,
-    downloadURL: `${SERVICE_URL}/clash-verge-service${ext}`,
-  });
-};
 
 const resolveInstall = () => {
   let ext = platform === "win32" ? ".exe" : "";
@@ -444,21 +320,6 @@ const resolveUninstall = () => {
   });
 };
 
-const resolveMmdb = () =>
-  resolveResource({
-    file: "Country.mmdb",
-    downloadURL: `https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/country.mmdb`,
-  });
-const resolveGeosite = () =>
-  resolveResource({
-    file: "geosite.dat",
-    downloadURL: `https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat`,
-  });
-const resolveGeoIP = () =>
-  resolveResource({
-    file: "geoip.dat",
-    downloadURL: `https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.dat`,
-  });
 const resolveEnableLoopback = () =>
   resolveResource({
     file: "enableLoopback.exe",
@@ -473,12 +334,8 @@ const resolveWinSysproxy = () =>
 
 const tasks = [
   { name: "plugin", func: resolvePlugin, retry: 5, winOnly: true },
-  { name: "service", func: resolveService, retry: 5 },
   { name: "install", func: resolveInstall, retry: 5 },
   { name: "uninstall", func: resolveUninstall, retry: 5 },
-  { name: "mmdb", func: resolveMmdb, retry: 5 },
-  { name: "geosite", func: resolveGeosite, retry: 5 },
-  { name: "geoip", func: resolveGeoIP, retry: 5 },
   {
     name: "enableLoopback",
     func: resolveEnableLoopback,

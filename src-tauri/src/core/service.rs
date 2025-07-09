@@ -748,11 +748,6 @@ pub(super) async fn start_with_existing_service(config_file: &PathBuf) -> Result
 
     let clash_core = Config::verge().latest().get_valid_clash_core();
 
-    let bin_ext = if cfg!(windows) { ".exe" } else { "" };
-    let clash_bin = format!("{clash_core}{bin_ext}");
-    let bin_path = current_exe()?.with_file_name(clash_bin);
-    let bin_path = dirs::path_to_str(&bin_path)?;
-
     let config_dir = dirs::app_home_dir()?;
     let config_dir = dirs::path_to_str(&config_dir)?;
 
