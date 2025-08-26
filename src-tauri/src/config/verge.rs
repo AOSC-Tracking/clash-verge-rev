@@ -234,7 +234,7 @@ pub struct IVergeTheme {
 
 impl IVerge {
     /// 有效的clash核心名称
-    pub const VALID_CLASH_CORES: &'static [&'static str] = &["verge-mihomo", "verge-mihomo-alpha"];
+    pub const VALID_CLASH_CORES: &'static [&'static str] = &["mihomo", "mihomo-alpha"];
 
     /// 验证并修正配置文件中的clash_core值
     pub async fn validate_and_fix_config() -> Result<()> {
@@ -253,10 +253,10 @@ impl IVerge {
                     warn,
                     Type::Config,
                     true,
-                    "启动时发现无效的clash_core配置: '{}', 将自动修正为 'verge-mihomo'",
+                    "启动时发现无效的clash_core配置: '{}', 将自动修正为 'mihomo'",
                     core
                 );
-                config.clash_core = Some("verge-mihomo".to_string());
+                config.clash_core = Some("mihomo".to_string());
                 needs_fix = true;
             }
         } else {
@@ -264,9 +264,9 @@ impl IVerge {
                 info,
                 Type::Config,
                 true,
-                "启动时发现未配置clash_core, 将设置为默认值 'verge-mihomo'"
+                "启动时发现未配置clash_core, 将设置为默认值 'mihomo'"
             );
-            config.clash_core = Some("verge-mihomo".to_string());
+            config.clash_core = Some("mihomo".to_string());
             needs_fix = true;
         }
 
@@ -317,7 +317,7 @@ impl IVerge {
     pub fn get_valid_clash_core(&self) -> String {
         self.clash_core
             .clone()
-            .unwrap_or_else(|| "verge-mihomo".to_string())
+            .unwrap_or_else(|| "mihomo".to_string())
     }
 
     fn get_system_language() -> String {
