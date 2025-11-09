@@ -88,7 +88,7 @@
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "@vitejs/plugin-legacy": "^7.2.1",
-    "@vitejs/plugin-react-swc": "^4.2.1",
+    "@vitejs/plugin-react": "^5.1.0",
     "adm-zip": "^0.5.16",
     "cli-color": "^2.0.4",
     "commander": "^14.0.2",
@@ -132,5 +132,10 @@
     ]
   },
   "type": "module",
-  "packageManager": "pnpm@9.13.2"
+  "packageManager": "pnpm@9.13.2",
+  "pnpm": {
+    "overrides": {
+      "rollup": "npm:@rollup/wasm-node"
+    }
+  }
 }
