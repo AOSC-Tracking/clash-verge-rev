@@ -190,7 +190,8 @@ const META_ALPHA_MAP = {
   'linux-arm64': 'mihomo-linux-arm64',
   'linux-arm': 'mihomo-linux-armv7',
   'linux-riscv64': 'mihomo-linux-riscv64',
-  'linux-loong64': 'mihomo-linux-loong64',
+  'linux-loong64': 'mihomo-linux-loong64-abi2',
+  'linux-ppc64': 'mihomo-linux-ppc64le',
 }
 
 const META_MAP = {
@@ -204,7 +205,8 @@ const META_MAP = {
   'linux-arm64': 'mihomo-linux-arm64',
   'linux-arm': 'mihomo-linux-armv7',
   'linux-riscv64': 'mihomo-linux-riscv64',
-  'linux-loong64': 'mihomo-linux-loong64',
+  'linux-loong64': 'mihomo-linux-loong64-abi2',
+  'linux-ppc64': 'mihomo-linux-ppc64le',
 }
 
 // =======================

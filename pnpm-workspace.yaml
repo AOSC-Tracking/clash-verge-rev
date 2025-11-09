@@ -2,7 +2,14 @@ allowBuilds:
   "@parcel/watcher": true
   core-js: true
   es5-ext: true
+  esbuild: true
   meta-json-schema: true
   unrs-resolver: true
 minimumReleaseAgeExclude:
   - dayjs@1.11.21
+overrides:
+  "rollup": "npm:@rollup/wasm-node"
+  "lightningcss": "npm:lightningcss-wasm"
+  "vite": "^7.0.0"
+  "@vitejs/plugin-legacy": "^7.0.0"
+  "@vitejs/plugin-react": "^5.0.0"
