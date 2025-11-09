@@ -140,6 +140,13 @@
       "es5-ext",
       "meta-json-schema",
       "unrs-resolver"
-    ]
+    ],
+    "overrides": {
+      "rollup": "npm:@rollup/wasm-node",
+      "lightningcss": "npm:lightningcss-wasm",
+      "vite": "^7.0.0",
+      "@vitejs/plugin-legacy": "^7.0.0",
+      "@vitejs/plugin-react": "^5.0.0"
+    }
   }
 }

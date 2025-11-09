@@ -1,0 +1,5 @@
+supportedArchitectures:
+  os:
+    - wasip1-threads
+  cpu:
+    - wasm32

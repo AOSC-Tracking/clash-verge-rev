@@ -721,7 +721,6 @@ dependencies = [
  "dashmap 6.1.0",
  "dynify",
  "fast-float2",
- "float16",
  "futures-channel",
  "futures-concurrency",
  "futures-lite 2.6.1",
@@ -2523,16 +2522,6 @@ dependencies = [
  "nu-ansi-term",
  "regex",
  "thiserror 2.0.18",
-]
-
-[[package]]
-name = "float16"
-version = "0.1.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7bffafbd079d520191c7c2779ae9cf757601266cf4167d3f659ff09617ff8483"
-dependencies = [
- "cfg-if",
- "rustc_version 0.2.3",
 ]
 
 [[package]]
