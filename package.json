@@ -90,7 +90,7 @@
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-legacy": "^7.2.1",
-    "@vitejs/plugin-react-swc": "^4.2.3",
+    "@vitejs/plugin-react": "^5.1.4",
     "adm-zip": "^0.5.16",
     "cli-color": "^2.0.4",
     "commander": "^14.0.3",
@@ -132,13 +132,8 @@
   "type": "module",
   "packageManager": "pnpm@10.29.2",
   "pnpm": {
-    "onlyBuiltDependencies": [
-      "@parcel/watcher",
-      "@swc/core",
-      "core-js",
-      "es5-ext",
-      "esbuild",
-      "unrs-resolver"
-    ]
+    "overrides": {
+      "rollup": "npm:@rollup/wasm-node"
+    }
   }
 }
