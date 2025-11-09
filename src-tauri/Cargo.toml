@@ -59,7 +59,7 @@ open = "5.3.3"
 dunce = "1.0.5"
 nanoid = "0.4"
 chrono = "0.4.42"
-boa_engine = "0.21.0"
+boa_engine = { version = "0.21.0", features = ["xsum"], default-features = false }
 once_cell = { version = "1.21.3", features = ["parking_lot"] }
 port_scanner = "0.1.5"
 delay_timer = "0.11.6"
